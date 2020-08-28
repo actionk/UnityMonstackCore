@@ -3,7 +3,7 @@
 Core library of Monstack Tools. Contains extras that are used in different Monstack Tools projects, such as:
 * [Content Loader](https://github.com/actionk/UnityMonstackContentLoader)
 
-Contents:
+# Table of Contents
 
 * [Install](#install)
 * [Dependendecy Injection](#dependency-injection)
