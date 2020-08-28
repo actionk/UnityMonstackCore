@@ -35,11 +35,5 @@ namespace Plugins.UnityMonstackCore.Providers
             var sprite = Resources.Load<Sprite>("Sprites/" + key);
             return CheckForNullAndReturn(sprite, "Sprite wasn't loaded, path: " + key);
         }
-
-        public static GameObject GetGuiPrefab(string key)
-        {
-            var gameObject = Resources.Load<GameObject>("Prefabs/GuiPrefabs/" + key);
-            return CheckForNullAndReturn(gameObject, "Gameobject wasn't loaded, path: " + key);
-        }
     }
 }
