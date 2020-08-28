@@ -5,7 +5,7 @@ Core library of Monstack Tools. Contains extras that are used in different Monst
 
 Contents:
 
-* [Install]
+* [Install](#install)
 * [Dependendecy Injection](#dependency-injection)
 * [Extensions](#extensions)
 * [Logger](#logger)
@@ -13,7 +13,6 @@ Contents:
 * * [Resource Provider](#resources-provider)
 * [Services](#services)
 * * [Event Service](#event-service)
-* [Utils](#utils)
 
 # Install
 
@@ -109,4 +108,132 @@ By default all classes are being instantied once they are resolved. To do this i
 
 ```cs
 [Inject(CreateOnStartup = true)]
+```
+
+# Extensions
+
+The library contains some useful extensions that you might need in your everyday routine. Some examples:
+
+```cs
+var pointX = x.Remap(0, size.x, 0, maskSize.x);
+```
+
+```cs
+gameObject.transform.DestroyChildren();
+```
+
+```cs
+Camera.main.GetOrthographicBounds();
+```
+
+```cs
+dictionary.ComputeIfAbsent(key, x => new Value {id = x});
+```
+
+# Loggers
+
+The library contains a simple logger as a wrapper to original Unity's logger.
+
+```cs
+UnityLogger.Log(message)
+UnityLogger.Debug(message)
+UnityLogger.Info(message)
+UnityLogger.Warning(message)
+UnityLogger.Warning(message)
+UnityLogger.Error(message)
+UnityLogger.Format(message)
+```
+
+### Setting logger level
+
+```cs
+UnityLogger.SetLevel(LoggingLevel.ERROR)
+```
+
+There are four logging levels:
+
+```cs
+public enum LoggingLevel
+        {
+            ERROR,
+            WARNING,
+            INFO,
+            DEBUG
+        }
+```
+
+# Providers
+
+## Resource Provider
+
+ResourceProvider is a simple util that resolves resources from `Resources` folder:
+
+```cs
+ResourceProvider.GetPrefab(prefabName); // Looks for Resources/Prefabs/<prefabName>
+ResourceProvider.GetMaterial(materialName); // Looks for Resources/Prefabs/<materialName>
+ResourceProvider.GetJSON(jsonName); // Looks for Resources/Prefabs/<jsonName>
+ResourceProvider.GetSprite(spriteName); // Looks for Resources/Prefabs/<spriteName>
+```
+
+# Services
+
+## Event Service
+
+If you want to create a simple EventSystem, first of all you create a enum for your event types:
+
+```cs
+public enum EventType {
+  MY_EVENT_1,
+  MY_EVENT_2
+}
+```
+
+Then you create an `EventService` by inheriting from `AbstractEventService`:
+
+```cs
+[Inject]
+public class EventService : AbstractEventService<EventType> {
+
+}
+```
+
+### Subscribing to events
+
+```cs
+public void Start() {
+  DependencyProvider.Resolve<EventManager>().CreateListener<ShowStorageUIEvent>(EventType.MY_EVENT_1, ShowStorageEvent);
+}
+
+private void ShowStorageEvent(ShowStorageUIEvent eventData)
+{
+  // on event
+}
+```
+
+### Unsubscribing all by event type
+
+```cs
+DependencyProvider.Resolve<EventManager>().RemoveSubscribersForEvent(EventType.MY_EVENT_1);
+```
+
+### Unsubscribing by target
+
+```cs
+DependencyProvider.Resolve<EventManager>().RemoveSubscribersForTarget(this)
+```
+
+### Dispatching an event
+
+With event data:
+
+```cs
+DependencyProvider.Resolve<EventManager>()..DispatchEvent(UIEvent.MY_EVENT_1, new ShowStorageUIEvent
+            {
+                objectId = objectId,
+            });
+```
+No event data:
+
+```cs
+DependencyProvider.Resolve<EventManager>()..DispatchEvent(UIEvent.MY_EVENT_2);
 ```
