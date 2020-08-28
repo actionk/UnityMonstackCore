@@ -1,7 +1,7 @@
 using System;
 using System.IO;
-using Plugins.UnityContentLoader;
-using Plugins.UnityMonstackCore.Logs;
+using Plugins.UnityMonstackContentLoader;
+using Plugins.UnityMonstackCore.Loggers;
 using UnityEngine;
 
 namespace Plugins.UnityMonstackCore.Utils

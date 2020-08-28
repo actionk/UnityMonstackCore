@@ -1,4 +1,4 @@
-﻿using Plugins.UnityMonstackCore.Logs;
+﻿using Plugins.UnityMonstackCore.Loggers;
 using UnityEngine;
 
 namespace Plugins.UnityMonstackCore.Providers
