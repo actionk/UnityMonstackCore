@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Plugins.UnityMonstackCore.Loggers;
-using Sirenix.Utilities;
 using UnityEngine;
 
 #endregion
@@ -196,7 +195,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
             foreach (var method in newObject.GetType().GetMethods())
             {
-                var afterInstantiationAttribute = method.GetAttribute<OnCreate>();
+                var afterInstantiationAttribute = method.GetCustomAttribute<OnCreate>();
                 if (afterInstantiationAttribute != null)
                 {
                     if (method.GetParameters().Length > 0)
