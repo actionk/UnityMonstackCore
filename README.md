@@ -11,6 +11,7 @@ Core library of Monstack Tools. Contains extras that are used in different Monst
 * [Logger](#logger)
 * [Providers](#providers)
 * * [Resource Provider](#resources-provider)
+* [FPS Counter]
 * [Services](#services)
 * * [Event Service](#event-service)
 
@@ -174,6 +175,10 @@ ResourceProvider.GetMaterial(materialName); // Looks for Resources/Prefabs/<mate
 ResourceProvider.GetJSON(jsonName); // Looks for Resources/Prefabs/<jsonName>
 ResourceProvider.GetSprite(spriteName); // Looks for Resources/Prefabs/<spriteName>
 ```
+
+# FPS Counter
+
+If you need a FPS counter in your project, just use the Prefab "Prefabs/FPSCounter"
 
 # Services
 
