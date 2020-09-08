@@ -11,7 +11,7 @@ Core library of Monstack Tools. Contains extras that are used in different Monst
 * [Logger](#logger)
 * [Providers](#providers)
 * * [Resource Provider](#resources-provider)
-* [FPS Counter]
+* [FPS Counter](#fps-counter)
 * [Services](#services)
 * * [Event Service](#event-service)
 
