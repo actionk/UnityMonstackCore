@@ -137,6 +137,30 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         }
 
         /// <summary>
+        /// remove an object that matches the given predicate
+        /// </summary>
+        /// <param name="match">lamda expression</param>
+        public bool Remove(Predicate<T> match)
+        {
+            var list = new List<KdNode>(_getNodes());
+            var kdNodeToRemove = list.FindIndex(n => match(n.entry));
+            if (kdNodeToRemove == -1)
+                return false;
+
+            Clear();
+            foreach (var node in list)
+            {
+                node._oldRef = null;
+                node.next = null;
+            }
+
+            foreach (var node in list)
+                _add(node);
+
+            return true;
+        }
+
+        /// <summary>
         /// count all objects that matches the given predicate
         /// </summary>
         /// <param name="match">lamda expression</param>
@@ -321,7 +345,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// <returns>closest object</returns>
         public T FindClosest(Vector3 position, IKDTreeEntry excluding)
         {
-            return _findClosest(position, null, excluding);
+            return _findClosest(position, null);
         }
 
         /// <summary>
@@ -329,14 +353,14 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// </summary>
         /// <param name="position">position</param>
         /// <returns>close object</returns>
-        public IEnumerable<IKDTreeEntry> FindClose(Vector3 position)
+        public IEnumerable<T> FindClose(Vector3 position)
         {
             var output = new List<T>();
             _findClosest(position, output);
             return output;
         }
 
-        protected T _findClosest(float3 position, List<T> traversed = null, IKDTreeEntry excluding = null)
+        protected T _findClosest(float3 position, List<T> traversed = null)
         {
             if (_root == null)
                 return null;
@@ -362,8 +386,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
                     traversed.Add(current.entry);
 
                 var nodeDist = _distance(position, current.entry.Position);
-                var isNotExcluded = excluding == null || excluding != current.entry;
-                if (isNotExcluded && nodeDist < nearestDist)
+                if (nodeDist < nearestDist)
                 {
                     nearestDist = nodeDist;
                     nearest = current;
