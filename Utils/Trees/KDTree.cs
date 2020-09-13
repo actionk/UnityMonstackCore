@@ -106,15 +106,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         {
             var list = new List<KdNode>(_getNodes());
             list.RemoveAt(i);
-            Clear();
-            foreach (var node in list)
-            {
-                node._oldRef = null;
-                node.next = null;
-            }
-
-            foreach (var node in list)
-                _add(node);
+            RestructTree(list);
         }
 
         /// <summary>
@@ -125,15 +117,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         {
             var list = new List<KdNode>(_getNodes());
             list.RemoveAll(n => match(n.entry));
-            Clear();
-            foreach (var node in list)
-            {
-                node._oldRef = null;
-                node.next = null;
-            }
-
-            foreach (var node in list)
-                _add(node);
+            RestructTree(list);
         }
 
         /// <summary>
@@ -146,7 +130,14 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
             var kdNodeToRemove = list.FindIndex(n => match(n.entry));
             if (kdNodeToRemove == -1)
                 return false;
+            list.RemoveAt(kdNodeToRemove);
 
+            RestructTree(list);
+            return true;
+        }
+
+        private void RestructTree(List<KdNode> list)
+        {
             Clear();
             foreach (var node in list)
             {
@@ -156,8 +147,6 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
 
             foreach (var node in list)
                 _add(node);
-
-            return true;
         }
 
         /// <summary>

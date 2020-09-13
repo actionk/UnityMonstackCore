@@ -15,5 +15,10 @@ namespace Plugins.UnityMonstackCore.Extensions.Collections
 
             return "[" + string.Join(", ", stringValues) + "]";
         }
+
+        public static bool IsEmpty<T>(this List<T> value)
+        {
+            return value.Count == 0;
+        }
     }
 }

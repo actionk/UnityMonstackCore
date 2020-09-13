@@ -79,15 +79,17 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 INITIALIZE_ON_STARTUP.Add(new InitializeOnStartup {MethodInfo = resolveMethodInfo, Type = type});
         }
 
-        public static void Add<T>(T objectToSet)
+        public static T Add<T>(T objectToSet)
         {
             Add(objectToSet.GetType(), objectToSet);
+            return objectToSet;
         }
 
-        public static void Add<T>(Type type, T objectToSet)
+        public static T Add<T>(Type type, T objectToSet)
         {
             if (!DEPENDENCIES.ContainsKey(type)) DEPENDENCIES[type] = new HashSet<object>();
             DEPENDENCIES[type].Add(objectToSet);
+            return objectToSet;
         }
 
         public static T Resolve<T>() where T : class
