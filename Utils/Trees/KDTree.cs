@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -347,6 +348,19 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
             var output = new List<T>();
             _findClosest(position, output);
             return output;
+        }
+
+        /// <summary>
+        /// Find close objects to given position
+        /// </summary>
+        /// <param name="position">position</param>
+        /// <param name="maxDistance">maxDistance</param>
+        /// <returns>close object</returns>
+        public IEnumerable<T> FindClose(Vector3 position, float maxDistance)
+        {
+            var output = new List<T>();
+            _findClosest(position, output);
+            return output.Where(x => math.distance(position, x.Position) <= maxDistance);
         }
 
         protected T _findClosest(float3 position, List<T> traversed = null)

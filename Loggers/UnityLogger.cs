@@ -70,6 +70,18 @@ namespace Plugins.UnityMonstackCore.Loggers
             Info(message, arguments);
         }
 
+        public static void Log(string prefix, string message)
+        {
+            if (LOGGING_LEVEL < LoggingLevel.INFO) return;
+            Info(prefix, message);
+        }
+
+        public static void Log(string prefix, string message, [NotNull] params object[] arguments)
+        {
+            if (LOGGING_LEVEL < LoggingLevel.INFO) return;
+            Info(prefix, message, arguments);
+        }
+
         public static void Debug(string message)
         {
             if (LOGGING_LEVEL < LoggingLevel.DEBUG) return;
@@ -80,6 +92,18 @@ namespace Plugins.UnityMonstackCore.Loggers
         {
             if (LOGGING_LEVEL < LoggingLevel.DEBUG) return;
             Info(message, arguments);
+        }
+
+        public static void Debug(string prefix, string message)
+        {
+            if (LOGGING_LEVEL < LoggingLevel.DEBUG) return;
+            Info(prefix, message);
+        }
+
+        public static void Debug(string prefix, string message, [NotNull] params object[] arguments)
+        {
+            if (LOGGING_LEVEL < LoggingLevel.DEBUG) return;
+            Info(prefix, message, arguments);
         }
 
         public static void Info(string message)
@@ -93,6 +117,20 @@ namespace Plugins.UnityMonstackCore.Loggers
         {
             if (LOGGING_LEVEL < LoggingLevel.INFO) return;
             var logMessage = GetPrefix() + Format(message, arguments);
+            UnityEngine.Debug.Log(logMessage);
+        }
+
+        public static void Info(string prefix, string message)
+        {
+            if (LOGGING_LEVEL < LoggingLevel.INFO) return;
+            var logMessage = GetPrefix() + "[" + prefix + "] " + message;
+            UnityEngine.Debug.Log(logMessage);
+        }
+
+        public static void Info(string prefix, string message, [NotNull] params object[] arguments)
+        {
+            if (LOGGING_LEVEL < LoggingLevel.INFO) return;
+            var logMessage = GetPrefix() + "[" + prefix + "] " + Format(message, arguments);
             UnityEngine.Debug.Log(logMessage);
         }
 
