@@ -7,12 +7,11 @@ using UnityEngine;
 
 namespace Plugins.UnityMonstackCore.Utils.Trees
 {
-    public class KdTree<T> : IEnumerable<T>, IEnumerable where T : class, KdTree<T>.IKDTreeEntry
+    public class KdTree2d<T> : IEnumerable<T> where T : class, IKdTree2dEntry
     {
         protected KdNode _root;
         protected KdNode _last;
         protected int _count;
-        protected bool _just2D;
         protected float _LastUpdate = -1f;
         protected KdNode[] _open;
 
@@ -29,16 +28,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         public float AverageSearchLength { protected set; get; }
         public float AverageSearchDeep { protected set; get; }
 
-        /// <summary>
-        /// create a tree
-        /// </summary>
-        /// <param name="just2D">just use x/z</param>
-        public KdTree(bool just2D = false)
-        {
-            _just2D = just2D;
-        }
-
-        public IKDTreeEntry this[int key]
+        public IKdTree2dEntry this[int key]
         {
             get
             {
@@ -74,9 +64,9 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// find all objects that matches the given predicate
         /// </summary>
         /// <param name="match">lamda expression</param>
-        public KdTree<T> FindAll(Predicate<T> match)
+        public KdTree2d<T> FindAll(Predicate<T> match)
         {
-            var list = new KdTree<T>(_just2D);
+            var list = new KdTree2d<T>();
             foreach (var node in this)
                 if (match(node))
                     list.Add(node);
@@ -250,20 +240,9 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
             return GetEnumerator();
         }
 
-        protected float _distance(Vector3 a, Vector3 b)
+        protected float _getSplitValue(int level, int2 position)
         {
-            if (_just2D)
-                return (a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z);
-            else
-                return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z);
-        }
-
-        protected float _getSplitValue(int level, Vector3 position)
-        {
-            if (_just2D)
-                return (level % 2 == 0) ? position.x : position.z;
-            else
-                return (level % 3 == 0) ? position.x : (level % 3 == 1) ? position.y : position.z;
+            return (level % 2 == 0) ? position.x : position.y;
         }
 
         private void _add(KdNode newNode)
@@ -297,7 +276,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
                 parent.right = newNode; //go right
         }
 
-        private KdNode _findParent(Vector3 position)
+        private KdNode _findParent(int2 position)
         {
             //travers from root to bottom and check every node
             var current = _root;
@@ -322,7 +301,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// </summary>
         /// <param name="position">position</param>
         /// <returns>closest object</returns>
-        public T FindClosest(Vector3 position)
+        public T FindClosest(int2 position)
         {
             return _findClosest(position);
         }
@@ -333,7 +312,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// <param name="position">position</param>
         /// <param name="excluding">excluding</param>
         /// <returns>closest object</returns>
-        public T FindClosest(Vector3 position, IKDTreeEntry excluding)
+        public T FindClosest(int2 position, IKdTree2dEntry excluding)
         {
             return _findClosest(position, null);
         }
@@ -343,7 +322,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// </summary>
         /// <param name="position">position</param>
         /// <returns>close object</returns>
-        public IEnumerable<T> FindClose(Vector3 position)
+        public IEnumerable<T> FindClose(int2 position)
         {
             var output = new List<T>();
             _findClosest(position, output);
@@ -356,14 +335,14 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// <param name="position">position</param>
         /// <param name="maxDistance">maxDistance</param>
         /// <returns>close object</returns>
-        public IEnumerable<T> FindClose(Vector3 position, float maxDistance)
+        public IEnumerable<T> FindClose(int2 position, float maxDistance)
         {
             var output = new List<T>();
             _findClosest(position, output);
             return output.Where(x => math.distance(position, x.Position) <= maxDistance);
         }
 
-        protected T _findClosest(float3 position, List<T> traversed = null)
+        protected T _findClosest(int2 position, List<T> traversed = null)
         {
             if (_root == null)
                 return null;
@@ -388,7 +367,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
                 if (traversed != null)
                     traversed.Add(current.entry);
 
-                var nodeDist = _distance(position, current.entry.Position);
+                var nodeDist = math.distance(position, current.entry.Position);
                 if (nodeDist < nearestDist)
                 {
                     nearestDist = nodeDist;
@@ -443,11 +422,6 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
             internal KdNode right;
             internal KdNode next;
             internal KdNode _oldRef;
-        }
-
-        public interface IKDTreeEntry
-        {
-            float3 Position { get; }
         }
     }
 }
