@@ -71,7 +71,7 @@ namespace Plugins.UnityMonstackCore.Behaviours
         {
             double finishTime = EditorApplication.timeSinceStartup;
             double compilationTime = finishTime - m_assembleStartTime;
-            Debug.Log($"Assemble compilation finished: {compilationTime:F2} \n {message}");
+            Debug.Log($"Assembly compilation finished: {compilationTime:F2} \n {message}");
         }
     }
 }
