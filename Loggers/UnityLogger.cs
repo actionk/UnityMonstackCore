@@ -20,7 +20,8 @@ namespace Plugins.UnityMonstackCore.Loggers
         public enum Prefixes
         {
             None = 0,
-            Time = 1
+            Time = 1,
+            TimeMillis = 2,
         }
 
         private static readonly Regex PATTERN_REGEX = new Regex("\\{\\}");
@@ -48,10 +49,21 @@ namespace Plugins.UnityMonstackCore.Loggers
             var prefix = new StringBuilder();
             prefix.Append("[");
 
+            var needsComma = false;
+
             if ((PREFIX & Prefixes.Time) != Prefixes.None)
             {
+                var time = DateTimeOffset.Now.LocalDateTime;
+                prefix.Append($"{(needsComma ? ", " : "")}{time}");
+                needsComma = true;
+            }
+
+
+            if ((PREFIX & Prefixes.TimeMillis) != Prefixes.None)
+            {
                 var time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                prefix.Append($"Time={time}");
+                prefix.Append($"{(needsComma ? ", " : "")}{time}");
+                needsComma = true;
             }
 
             prefix.Append("] ");
