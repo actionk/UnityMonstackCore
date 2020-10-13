@@ -34,5 +34,10 @@ namespace Plugins.UnityMonstackCore.Extensions
         {
             return new float2(v.x, v.z);
         }
+
+        public static int2 ToInt2(this float2 v)
+        {
+            return new int2((int)v.x, (int)v.y);
+        }
     }
 }
