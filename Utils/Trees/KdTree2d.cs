@@ -306,17 +306,6 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         }
 
         /// <summary>
-        /// Find closest object to given position
-        /// </summary>
-        /// <param name="position">position</param>
-        /// <param name="excluding">excluding</param>
-        /// <returns>closest object</returns>
-        public T FindClosest(int2 position, IKdTree2dEntry excluding)
-        {
-            return _findClosest(position, null);
-        }
-
-        /// <summary>
         /// Find close objects to given position
         /// </summary>
         /// <param name="position">position</param>
@@ -381,19 +370,20 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
             while (openCur < _open.Length && _open[openCur] != null)
             {
                 var current = _open[openCur++];
-                if (traversed != null && (selector == null || selector.Invoke(current.entry)))
-                    traversed.Add(current.entry);
+                var distanceToNode = math.distance(position, current.entry.Position);
 
-                var nodeDist = math.distance(position, current.entry.Position);
+                var isCloseEnough = maxDistance < 0 || distanceToNode <= maxDistance;
+                var isSelected = selector == null || selector.Invoke(current.entry);
 
-                if (
-                    (nodeDist < nearestDist) &&
-                    (maxDistance < 0 || nodeDist <= maxDistance) &&
-                    (selector == null || selector.Invoke(current.entry))
-                )
+                if (isCloseEnough && isSelected)
                 {
-                    nearestDist = nodeDist;
-                    nearest = current;
+                    traversed?.Add(current.entry);
+
+                    if (distanceToNode < nearestDist)
+                    {
+                        nearestDist = distanceToNode;
+                        nearest = current;
+                    }
                 }
 
                 var splitCurrent = _getSplitValue(current);
