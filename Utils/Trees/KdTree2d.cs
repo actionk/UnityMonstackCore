@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -322,7 +321,7 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// </summary>
         /// <param name="position">position</param>
         /// <returns>close object</returns>
-        public IEnumerable<T> FindClose(int2 position)
+        public List<T> FindClose(int2 position)
         {
             var output = new List<T>();
             _findClosest(position, output);
@@ -335,19 +334,32 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
         /// <param name="position">position</param>
         /// <param name="maxDistance">maxDistance</param>
         /// <returns>close object</returns>
-        public IEnumerable<T> FindClose(int2 position, float maxDistance)
+        public List<T> FindClose(int2 position, float maxDistance)
         {
             var output = new List<T>();
-            _findClosest(position, output);
-            return output.Where(x => math.distance(position, x.Position) <= maxDistance);
+            _findClosest(position, output, maxDistance);
+            return output;
+        }
+
+        /// <summary>
+        /// Find close objects to given position
+        /// </summary>
+        /// <param name="position">position</param>
+        /// <param name="maxDistance">maxDistance</param>
+        /// <returns>close object</returns>
+        public List<T> FindClose(int2 position, float maxDistance, Predicate<T> selector)
+        {
+            var output = new List<T>();
+            _findClosest(position, output, maxDistance, selector);
+            return output;
         }
 
         public T FindClosest(int2 position, Predicate<T> selector)
         {
-            return _findClosest(position, null, selector);
+            return _findClosest(position, null, -1, selector);
         }
 
-        protected T _findClosest(int2 position, List<T> traversed = null, Predicate<T> selector = null)
+        protected T _findClosest(int2 position, List<T> traversed = null, float maxDistance = -1, Predicate<T> selector = null)
         {
             if (_root == null)
                 return null;
@@ -373,7 +385,12 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
                     traversed.Add(current.entry);
 
                 var nodeDist = math.distance(position, current.entry.Position);
-                if (nodeDist < nearestDist && (selector == null || selector.Invoke(current.entry)))
+
+                if (
+                    (nodeDist < nearestDist) &&
+                    (maxDistance < 0 || nodeDist <= maxDistance) &&
+                    (selector == null || selector.Invoke(current.entry))
+                )
                 {
                     nearestDist = nodeDist;
                     nearest = current;
