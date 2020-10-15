@@ -342,7 +342,12 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
             return output.Where(x => math.distance(position, x.Position) <= maxDistance);
         }
 
-        protected T _findClosest(int2 position, List<T> traversed = null)
+        public T FindClosest(int2 position, Predicate<T> selector)
+        {
+            return _findClosest(position, null, selector);
+        }
+
+        protected T _findClosest(int2 position, List<T> traversed = null, Predicate<T> selector = null)
         {
             if (_root == null)
                 return null;
@@ -364,11 +369,11 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
             while (openCur < _open.Length && _open[openCur] != null)
             {
                 var current = _open[openCur++];
-                if (traversed != null)
+                if (traversed != null && (selector == null || selector.Invoke(current.entry)))
                     traversed.Add(current.entry);
 
                 var nodeDist = math.distance(position, current.entry.Position);
-                if (nodeDist < nearestDist)
+                if (nodeDist < nearestDist && (selector == null || selector.Invoke(current.entry)))
                 {
                     nearestDist = nodeDist;
                     nearest = current;
