@@ -167,6 +167,13 @@ namespace Plugins.UnityMonstackCore.Loggers
             UnityEngine.Debug.LogWarning(logMessage);
         }
 
+        public static void Warning(string prefix, string message, [NotNull] params object[] arguments)
+        {
+            if (LOGGING_LEVEL < LoggingLevel.INFO) return;
+            var logMessage = GetPrefix() + "[" + prefix + "] " + Format(message, arguments);
+            UnityEngine.Debug.LogWarning(logMessage);
+        }
+
         public static void Error(string message)
         {
             if (LOGGING_LEVEL < LoggingLevel.ERROR) return;
@@ -178,6 +185,13 @@ namespace Plugins.UnityMonstackCore.Loggers
         {
             if (LOGGING_LEVEL < LoggingLevel.ERROR) return;
             var logMessage = GetPrefix() + Format(message, arguments);
+            UnityEngine.Debug.LogError(logMessage);
+        }
+
+        public static void Error(string prefix, string message, [NotNull] params object[] arguments)
+        {
+            if (LOGGING_LEVEL < LoggingLevel.INFO) return;
+            var logMessage = GetPrefix() + "[" + prefix + "] " + Format(message, arguments);
             UnityEngine.Debug.LogError(logMessage);
         }
 
