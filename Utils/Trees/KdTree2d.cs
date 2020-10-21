@@ -405,6 +405,9 @@ namespace Plugins.UnityMonstackCore.Utils.Trees
                 }
             }
 
+            if (nearest == null)
+                return null;
+
             AverageSearchLength = (99f * AverageSearchLength + openCur) / 100f;
             AverageSearchDeep = (99f * AverageSearchDeep + nearest.level) / 100f;
 
