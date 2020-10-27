@@ -10,6 +10,11 @@ namespace Plugins.UnityMonstackCore.Extensions
             return new int2((int) math.floor(v.x), (int) math.floor(v.z));
         }
 
+        public static float2 ToFloat2(this Vector3 v)
+        {
+            return new float2(v.x, v.z);
+        }
+
         public static int3 ToInt3(this Vector3 v)
         {
             return new int3((int) math.floor(v.x), (int) math.floor(v.y), (int) math.floor(v.z));
