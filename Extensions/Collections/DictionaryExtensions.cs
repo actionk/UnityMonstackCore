@@ -18,6 +18,22 @@ namespace Plugins.UnityMonstackCore.Extensions.Collections
             return dictionary.TryGetValue(key, out value) ? value : defaultValue;
         }
 
+        public static TValue GetValueOrCompute<TKey, TValue>
+        (this IDictionary<TKey, TValue> dictionary,
+            TKey key,
+            Func<TKey, TValue> func)
+        {
+            TValue result;
+
+            if (!dictionary.TryGetValue(key, out result))
+            {
+                result = func(key);
+                dictionary.Add(key, result);
+            }
+
+            return result;
+        }
+
         public static void ForEachKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Action<TKey> action)
         {
             foreach (var entry in dictionary) action.Invoke(entry.Key);
