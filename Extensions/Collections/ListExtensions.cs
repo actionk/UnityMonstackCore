@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace Plugins.UnityMonstackCore.Extensions.Collections
+namespace Plugins.Shared.UnityMonstackCore.Extensions.Collections
 {
     public static class ListExtensions
     {

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Plugins.UnityMonstackCore.Loggers
+namespace Plugins.Shared.UnityMonstackCore.Loggers
 {
     public class UnityLogger
     {

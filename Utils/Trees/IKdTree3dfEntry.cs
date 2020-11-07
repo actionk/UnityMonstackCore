@@ -1,6 +1,6 @@
 ﻿using Unity.Mathematics;
 
-namespace Plugins.UnityMonstackCore.Utils.Trees
+namespace Plugins.Shared.UnityMonstackCore.Utils.Trees
 {
     public interface IKdTree3dfEntry
     {

@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.Compilation;
 using UnityEngine;
 
-namespace Plugins.UnityMonstackCore.Behaviours
+namespace Plugins.Shared.UnityMonstackCore.Behaviours
 {
     [InitializeOnLoad]
     class CompilationTimeBehaviour

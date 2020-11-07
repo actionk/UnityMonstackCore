@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Plugins.UnityMonstackCore.Extensions.Collections;
+using Plugins.Shared.UnityMonstackCore.Extensions.Collections;
 
-namespace Plugins.UnityMonstackCore.Services.Event
+namespace Plugins.Shared.UnityMonstackCore.Services.Event
 {
     public class EventDispatcher<T>
     {

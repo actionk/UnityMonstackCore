@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Plugins.UnityMonstackCore.Loggers
+namespace Plugins.Shared.UnityMonstackCore.Loggers
 {
     public class UnityLoggerConfigBehaviour : MonoBehaviour
     {

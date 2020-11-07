@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Plugins.UnityMonstackCore.DependencyInjections
+namespace Plugins.Shared.UnityMonstackCore.DependencyInjections
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
     public class InjectAttribute : Attribute

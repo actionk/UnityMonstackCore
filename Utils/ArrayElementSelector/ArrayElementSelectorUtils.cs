@@ -1,6 +1,6 @@
 using System;
 
-namespace Plugins.UnityMonstackCore.Utils.ArrayElementSelector
+namespace Plugins.Shared.UnityMonstackCore.Utils.ArrayElementSelector
 {
     public static class ArrayElementSelectorUtils
     {

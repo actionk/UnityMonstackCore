@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Plugins.UnityMonstackCore.Extensions
+namespace Plugins.Shared.UnityMonstackCore.Extensions
 {
     public static class GameObjectExtension
     {

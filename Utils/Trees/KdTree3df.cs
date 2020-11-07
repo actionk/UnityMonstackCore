@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Plugins.UnityMonstackCore.Utils.Trees
+namespace Plugins.Shared.UnityMonstackCore.Utils.Trees
 {
     public class KdTree3df<T> : IEnumerable<T> where T : class, IKdTree3dfEntry
     {

@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using Plugins.UnityMonstackCore.Loggers;
+using Plugins.Shared.UnityMonstackCore.Loggers;
 using UnityEngine;
 
-namespace Plugins.UnityMonstackCore.Utils
+namespace Plugins.Shared.UnityMonstackCore.Utils
 {
     public class LocalStorageUtils
     {

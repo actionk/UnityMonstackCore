@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Plugins.UnityMonstackCore.Utils.Trees
+namespace Plugins.Shared.UnityMonstackCore.Utils.Trees
 {
     public class KdTree2d<T> : IEnumerable<T> where T : class, IKdTree2dEntry
     {

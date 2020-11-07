@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plugins.UnityMonstackCore.Utils
+namespace Plugins.Shared.UnityMonstackCore.Utils
 {
     public static class TimeUtils
     {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 #endregion
 
-namespace Plugins.UnityMonstackCore.Extensions
+namespace Plugins.Shared.UnityMonstackCore.Extensions
 {
     public static class CameraExtensions
     {

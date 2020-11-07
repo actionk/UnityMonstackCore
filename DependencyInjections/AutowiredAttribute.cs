@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plugins.UnityMonstackCore.DependencyInjections
+namespace Plugins.Shared.UnityMonstackCore.DependencyInjections
 {
     [AttributeUsage(AttributeTargets.Constructor)]
     public class AutowiredAttribute : Attribute

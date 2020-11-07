@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Plugins.UnityMonstackCore.Loggers;
+using Plugins.Shared.UnityMonstackCore.Loggers;
 using UnityEngine;
 
 #endregion
 
-namespace Plugins.UnityMonstackCore.DependencyInjections
+namespace Plugins.Shared.UnityMonstackCore.DependencyInjections
 {
     public static class DependencyProvider
     {
