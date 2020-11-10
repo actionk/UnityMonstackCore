@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Plugins.Shared.UnityMonstackCore.Loggers
+namespace Plugins.UnityMonstackCore.Loggers
 {
     public class UnityLoggerConfigBehaviour : MonoBehaviour
     {

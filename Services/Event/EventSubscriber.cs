@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plugins.Shared.UnityMonstackCore.Services.Event
+namespace Plugins.UnityMonstackCore.Services.Event
 {
     public class EventSubscriber<TEventKey>
     {

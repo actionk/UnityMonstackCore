@@ -2,7 +2,7 @@
 using UnityEngine;
 using Text = TMPro.TMP_Text;
 
-namespace Plugins.Shared.UnityMonstackCore.Behaviours
+namespace Plugins.UnityMonstackCore.Behaviours
 {
     public class FPSHudBehaviour : MonoBehaviour
     {

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Plugins.Shared.UnityMonstackCore.Utils
+namespace Plugins.UnityMonstackCore.Utils
 {
     public class Optional<T> : IEnumerable<T>
     {

@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Plugins.Shared.UnityMonstackCore.Utils
+namespace Plugins.UnityMonstackCore.Utils
 {
     public static class BinaryReaderExtension
     {

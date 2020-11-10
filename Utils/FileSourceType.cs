@@ -1,4 +1,4 @@
-﻿namespace Plugins.Shared.UnityMonstackCore.Utils
+﻿namespace Plugins.UnityMonstackCore.Utils
 {
     public enum FileSourceType
     {

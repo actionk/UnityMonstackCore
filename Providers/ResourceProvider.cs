@@ -1,7 +1,7 @@
-﻿using Plugins.Shared.UnityMonstackCore.Loggers;
+﻿using Plugins.UnityMonstackCore.Loggers;
 using UnityEngine;
 
-namespace Plugins.Shared.UnityMonstackCore.Providers
+namespace Plugins.UnityMonstackCore.Providers
 {
     public class ResourceProvider
     {

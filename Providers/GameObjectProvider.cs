@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Plugins.Shared.UnityMonstackCore.Providers
+namespace Plugins.UnityMonstackCore.Providers
 {
     public class GameObjectProvider
     {

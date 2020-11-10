@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Plugins.Shared.UnityMonstackCore.DependencyInjections
+namespace Plugins.UnityMonstackCore.DependencyInjections
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class OnCreate : Attribute

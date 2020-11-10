@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plugins.Shared.UnityMonstackCore.DependencyInjections
+namespace Plugins.UnityMonstackCore.DependencyInjections
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class InstantiableAttribute : Attribute

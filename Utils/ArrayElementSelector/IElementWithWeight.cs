@@ -1,4 +1,4 @@
-namespace Plugins.Shared.UnityMonstackCore.Utils.ArrayElementSelector
+namespace Plugins.UnityMonstackCore.Utils.ArrayElementSelector
 {
     public interface IElementWithWeight
     {

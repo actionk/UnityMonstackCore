@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plugins.Shared.UnityMonstackCore.Extensions
+namespace Plugins.UnityMonstackCore.Extensions
 {
     public static class ObjectExtensions
     {
