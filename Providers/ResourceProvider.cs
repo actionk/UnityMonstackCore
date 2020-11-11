@@ -36,6 +36,11 @@ namespace Plugins.UnityMonstackCore.Providers
             return CheckForNullAndReturn(sprite, "Sprite wasn't loaded, path: " + key);
         }
 
+        public static Sprite TryGetSprite(string key)
+        {
+            return Resources.Load<Sprite>("Sprites/" + key);
+        }
+
         public static T GetSettings<T>(string settingsName) where T : Object
         {
             return Resources.Load<T>("Settings/" + settingsName);

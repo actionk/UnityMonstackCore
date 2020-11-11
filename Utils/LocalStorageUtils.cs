@@ -28,9 +28,9 @@ namespace Plugins.UnityMonstackCore.Utils
             }
         }
 
-        public static void SaveBytesToFile(string pathToFile, byte[] bytes)
+        public static void SaveBytesToFile(FileSourceType fileSourceType, string pathToFile, byte[] bytes)
         {
-            var applicationPathToFile = GetApplicationPathToFile(pathToFile);
+            var applicationPathToFile = GetApplicationPathToFile(fileSourceType, pathToFile);
             CreateDirectoryIfNotExistsWithActualPath(Path.GetDirectoryName(applicationPathToFile));
 
             try
@@ -39,6 +39,7 @@ namespace Plugins.UnityMonstackCore.Utils
                 using (var writer = new BinaryWriter(File.OpenWrite(applicationPathToFile)))
                 {
                     writer.Write(bytes);
+                    writer.Flush();
                 }
             }
             catch (Exception)
@@ -47,6 +48,19 @@ namespace Plugins.UnityMonstackCore.Utils
                 UnityLogger.Error(errorMessage);
                 throw;
             }
+        }
+
+        public static string GetApplicationPathToFile(FileSourceType fileSourceType, string pathToFile)
+        {
+            switch (fileSourceType)
+            {
+                case FileSourceType.Resources:
+                    return Application.dataPath + "/Resources/" + pathToFile;
+                case FileSourceType.ApplicationPersistentData:
+                    return Application.persistentDataPath + "/" + pathToFile;
+            }
+
+            throw new NotImplementedException();
         }
 
         public static string GetApplicationPathToFile(string pathToFile)
@@ -74,17 +88,10 @@ namespace Plugins.UnityMonstackCore.Utils
         {
             try
             {
-                switch (fileSourceType)
+                var applicationPathToFile = GetApplicationPathToFile(fileSourceType, pathToFile);
+                using (var reader = new BinaryReader(File.Open(applicationPathToFile, FileMode.Open)))
                 {
-                    case FileSourceType.Resources:
-                        return Resources.Load<TextAsset>(pathToFile).bytes;
-
-                    case FileSourceType.ApplicationPersistentData:
-                        var applicationPathToFile = GetApplicationPathToFile(pathToFile);
-                        using (var reader = new BinaryReader(File.Open(applicationPathToFile, FileMode.Open)))
-                        {
-                            return reader.ReadAllBytes();
-                        }
+                    return reader.ReadAllBytes();
                 }
             }
             catch (Exception)
