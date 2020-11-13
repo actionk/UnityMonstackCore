@@ -136,39 +136,64 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
         private static void LoadIfUnresolved(Type type)
         {
+            if (DEPENDENCIES.ContainsKey(type))
+                return;
+
+            if (type.IsSubclassOf(typeof(MonoBehaviour)))
+            {
+                var instance = GameObject.FindObjectOfType(type);
+                if (instance != null)
+                    Add(type, instance);
+                else
+                {
+                    UnityLogger.Error("Failed to instantiate MonoBehaviour object of type {type}: no object found in the scene");
+                    return;
+                }
+            }
+
+            if (Application.isEditor && !Application.isPlaying)
+            {
+                if (!DEPENDENCIES.ContainsKey(type))
+                {
+                    UnityLogger.Debug($"Initializing dependency {type} inside the editor");
+                    InstantiateObject(type);
+                }
+
+                return;
+            }
+
             if (!IS_INITIALIZED)
                 throw new AccessViolationException(
                     "Tried to resolve without Initializing " + typeof(DependencyProvider));
+
             if (CURRENTLY_LOADING_DEPENDENCIES.Contains(type))
                 throw new AccessViolationException(
                     string.Format(
                         "An attempt to load class that is being loaded. Please check that you don't have any dependency usage of class {0}" +
                         " in its constructor", type));
-            if (!DEPENDENCIES.ContainsKey(type))
-            {
-                CURRENTLY_LOADING_DEPENDENCIES.Add(type);
 
-                foreach (var injectableType in INJECTABLE_TYPES)
-                    if (injectableType == type)
+            CURRENTLY_LOADING_DEPENDENCIES.Add(type);
+
+            foreach (var injectableType in INJECTABLE_TYPES)
+                if (injectableType == type)
+                {
+                    try
                     {
-                        try
-                        {
-                            InstantiateObject(type);
-                        }
-                        catch (Exception ex)
-                        {
-                            UnityLogger.Error("Tried to instantiate class [" + type + "], but failed because of: " + ex);
-                        }
+                        InstantiateObject(type);
                     }
-                    else if (type.IsAssignableFrom(injectableType))
+                    catch (Exception ex)
                     {
-                        if (!DEPENDENCIES.ContainsKey(injectableType)) LoadIfUnresolved(injectableType);
-
-                        foreach (var injectable in DEPENDENCIES[injectableType]) Add(type, injectable);
+                        UnityLogger.Error("Tried to instantiate class [" + type + "], but failed because of: " + ex);
                     }
+                }
+                else if (type.IsAssignableFrom(injectableType))
+                {
+                    if (!DEPENDENCIES.ContainsKey(injectableType)) LoadIfUnresolved(injectableType);
 
-                CURRENTLY_LOADING_DEPENDENCIES.Remove(type);
-            }
+                    foreach (var injectable in DEPENDENCIES[injectableType]) Add(type, injectable);
+                }
+
+            CURRENTLY_LOADING_DEPENDENCIES.Remove(type);
         }
 
         private static void InstantiateObject(Type type)
