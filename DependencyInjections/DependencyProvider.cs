@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Plugins.UnityMonstackCore.Loggers;
@@ -181,6 +182,12 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 var args = new List<object>();
                 foreach (var argument in parameterInfos)
                 {
+                    if (argument.IsOptional)
+                    {
+                        args.Add(Type.Missing);
+                        continue;
+                    }
+
                     if (argument.ParameterType.IsInstanceOfType(typeof(List<>)))
                         throw new InvalidOperationException("Injecting lists into constructor isn't supported");
 
@@ -188,7 +195,11 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                     args.Add(resolveByType);
                 }
 
-                newObject = Activator.CreateInstance(type, args.ToArray());
+                newObject = Activator.CreateInstance(type,
+                    BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance | BindingFlags.OptionalParamBinding,
+                    null,
+                    args.ToArray(),
+                    CultureInfo.CurrentCulture);
             }
             else
             {
@@ -216,13 +227,13 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             var constructorInfos = type.GetConstructors();
             foreach (var constructor in constructorInfos)
             {
-                var autowiredAttribute = Attribute.GetCustomAttribute(constructor, typeof(AutowiredAttribute));
+                var autowiredAttribute = Attribute.GetCustomAttribute(constructor, typeof(DefaultConstructorAttribute));
                 if (autowiredAttribute != null) return constructor;
             }
 
             if (constructorInfos.Length > 1)
                 throw new Exception("Class " + type +
-                                    " has more than 1 default constructor. Please define one of those as [Autowired]");
+                                    " has more than 1 default constructor. Please define one of those as [DefaultConstructor]");
 
             if (constructorInfos.Length == 1) return constructorInfos[0];
 

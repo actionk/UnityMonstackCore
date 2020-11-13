@@ -3,7 +3,7 @@
 namespace Plugins.UnityMonstackCore.DependencyInjections
 {
     [AttributeUsage(AttributeTargets.Constructor)]
-    public class AutowiredAttribute : Attribute
+    public class DefaultConstructorAttribute : Attribute
     {
     }
 }
