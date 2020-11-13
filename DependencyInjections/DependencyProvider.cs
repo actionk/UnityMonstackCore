@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Plugins.UnityMonstackCore.Loggers;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 #endregion
 
@@ -139,9 +140,9 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             if (DEPENDENCIES.ContainsKey(type))
                 return;
 
-            if (type.IsSubclassOf(typeof(MonoBehaviour)))
+            if (type.IsSubclassOf(typeof(MonoBehaviour)) && type.GetCustomAttribute<InjectAttribute>() != null)
             {
-                var instance = GameObject.FindObjectOfType(type);
+                var instance = Object.FindObjectOfType(type);
                 if (instance != null)
                     Add(type, instance);
                 else
