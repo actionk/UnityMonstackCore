@@ -45,5 +45,10 @@ namespace Plugins.UnityMonstackCore.Providers
         {
             return Resources.Load<T>("Settings/" + settingsName);
         }
+
+        public static GameObject TryGetPrefab(string key)
+        {
+            return Resources.Load<GameObject>("Prefabs/" + key);
+        }
     }
 }
