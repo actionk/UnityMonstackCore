@@ -140,6 +140,10 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             if (DEPENDENCIES.ContainsKey(type))
                 return;
 
+            if (CURRENTLY_LOADING_DEPENDENCIES.Contains(type))
+                throw new AccessViolationException(
+                    $"An attempt to load class that is being loaded. Please check that you don't have any dependency usage of class {type}" + " in its constructor");
+
             if (type.IsSubclassOf(typeof(MonoBehaviour)) && type.GetCustomAttribute<InjectAttribute>() != null)
             {
                 var instance = Object.FindObjectOfType(type);
@@ -147,7 +151,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                     Add(type, instance);
                 else
                 {
-                    UnityLogger.Error("Failed to instantiate MonoBehaviour object of type {type}: no object found in the scene");
+                    UnityLogger.Error($"Failed to instantiate MonoBehaviour object of type {type}: no object found in the scene");
                     return;
                 }
             }
@@ -166,12 +170,6 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             if (!IS_INITIALIZED)
                 throw new AccessViolationException(
                     "Tried to resolve without Initializing " + typeof(DependencyProvider));
-
-            if (CURRENTLY_LOADING_DEPENDENCIES.Contains(type))
-                throw new AccessViolationException(
-                    string.Format(
-                        "An attempt to load class that is being loaded. Please check that you don't have any dependency usage of class {0}" +
-                        " in its constructor", type));
 
             CURRENTLY_LOADING_DEPENDENCIES.Add(type);
 
