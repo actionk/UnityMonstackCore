@@ -150,10 +150,9 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 if (instance != null)
                     Add(type, instance);
                 else
-                {
                     UnityLogger.Error($"Failed to instantiate MonoBehaviour object of type {type}: no object found in the scene");
-                    return;
-                }
+
+                return;
             }
 
             if (Application.isEditor && !Application.isPlaying)
