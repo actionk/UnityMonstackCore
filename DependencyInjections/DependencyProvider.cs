@@ -21,19 +21,17 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
         private static Dictionary<Type, HashSet<object>> DEPENDENCIES = new Dictionary<Type, HashSet<object>>();
         private static Dictionary<Type, HashSet<Type>> INSTANTIABLE_TYPES = new Dictionary<Type, HashSet<Type>>();
         private static HashSet<Type> CURRENTLY_LOADING_DEPENDENCIES = new HashSet<Type>();
-
-#if UNITY_EDITOR
+        
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static void Reset()
         {
-            INJECTABLE_TYPES = new List<Type>();
-            INITIALIZE_ON_STARTUP = new List<InitializeOnStartup>();
-            DEPENDENCIES = new Dictionary<Type, HashSet<object>>();
-            INSTANTIABLE_TYPES = new Dictionary<Type, HashSet<Type>>();
-            CURRENTLY_LOADING_DEPENDENCIES = new HashSet<Type>();
+            INJECTABLE_TYPES.Clear();
+            INITIALIZE_ON_STARTUP.Clear();
+            DEPENDENCIES.Clear();
+            INSTANTIABLE_TYPES.Clear();
+            CURRENTLY_LOADING_DEPENDENCIES.Clear();
             IS_INITIALIZED = false;
         }
-#endif
 
         public static void Initialize(Assembly projectAssembly)
         {
