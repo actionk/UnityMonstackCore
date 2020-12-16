@@ -21,7 +21,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
         private static Dictionary<Type, HashSet<object>> DEPENDENCIES = new Dictionary<Type, HashSet<object>>();
         private static Dictionary<Type, HashSet<Type>> INSTANTIABLE_TYPES = new Dictionary<Type, HashSet<Type>>();
         private static HashSet<Type> CURRENTLY_LOADING_DEPENDENCIES = new HashSet<Type>();
-        
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static void Reset()
         {
@@ -41,6 +41,22 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
             foreach (var typeToInitializeOnStartup in INITIALIZE_ON_STARTUP)
                 LoadIfUnresolved(typeToInitializeOnStartup.Type);
+            INITIALIZE_ON_STARTUP.Clear();
+        }
+
+        public static void Shutdown(Assembly assembly)
+        {
+            var types = CURRENTLY_LOADING_DEPENDENCIES.ToArray();
+            foreach (var type in types)
+            {
+                if (type.Assembly == assembly)
+                {
+                    DEPENDENCIES.Remove(type);
+                    INJECTABLE_TYPES.Remove(type);
+                    INSTANTIABLE_TYPES.Remove(type);
+                    CURRENTLY_LOADING_DEPENDENCIES.Remove(type);
+                }
+            }
         }
 
         private static void InitializeForAssembly(Assembly assembly)
