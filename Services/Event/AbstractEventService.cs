@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Plugins.UnityMonstackCore.Services.Event
 {
@@ -49,6 +50,11 @@ namespace Plugins.UnityMonstackCore.Services.Event
             eventDispatcher.RemoveSubscribersForTarget(target);
         }
 
+        public void RemoveSubscribersForTargetAssembly(Assembly assembly)
+        {
+            eventDispatcher.RemoveSubscribersForTargetAssembly(assembly);
+        }
+
         public void DispatchEvent<TValue>(T eventId, TValue value) where TValue : class
         {
             eventDispatcher.DispatchEvent(eventId, value);
@@ -57,6 +63,11 @@ namespace Plugins.UnityMonstackCore.Services.Event
         public void DispatchEvent(T eventId)
         {
             eventDispatcher.DispatchEvent(eventId);
+        }
+
+        public void PrintSubscribers()
+        {
+            eventDispatcher.PrintSubscribers();
         }
     }
 }

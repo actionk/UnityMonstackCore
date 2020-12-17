@@ -46,15 +46,29 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
         public static void Shutdown(Assembly assembly)
         {
-            var types = CURRENTLY_LOADING_DEPENDENCIES.ToArray();
-            foreach (var type in types)
+            var injectableTypes = INJECTABLE_TYPES.ToArray();
+            foreach (var type in injectableTypes)
+            {
+                if (type.Assembly == assembly)
+                    INJECTABLE_TYPES.Remove(type);
+            }
+
+            var instantiableTypes = INSTANTIABLE_TYPES.Keys.ToArray();
+            foreach (var type in instantiableTypes)
+            {
+                if (type.Assembly == assembly)
+                    INSTANTIABLE_TYPES.Remove(type);
+            }
+
+            var createdTypes = DEPENDENCIES.Keys.ToArray();
+            foreach (var type in createdTypes)
             {
                 if (type.Assembly == assembly)
                 {
+                    UnityLogger.Log($"removing type {type}");
+                    var hashSet = DEPENDENCIES[type];
+                    hashSet.Clear();
                     DEPENDENCIES.Remove(type);
-                    INJECTABLE_TYPES.Remove(type);
-                    INSTANTIABLE_TYPES.Remove(type);
-                    CURRENTLY_LOADING_DEPENDENCIES.Remove(type);
                 }
             }
         }
