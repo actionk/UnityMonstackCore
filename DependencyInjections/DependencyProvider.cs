@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Plugins.Shared.UnityMonstackCore.Utils;
 using Plugins.UnityMonstackCore.Loggers;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -22,8 +21,6 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
         private static Dictionary<Type, HashSet<object>> DEPENDENCIES = new Dictionary<Type, HashSet<object>>();
         private static Dictionary<Type, HashSet<Type>> INSTANTIABLE_TYPES = new Dictionary<Type, HashSet<Type>>();
         private static HashSet<Type> CURRENTLY_LOADING_DEPENDENCIES = new HashSet<Type>();
-        private static HashSet<Type> ATTRIBUTES_TO_SEARCH_FOR = new HashSet<Type>();
-        private static MultiValueDictionary<Type, Type> TYPES_BY_ATTRIBUTES = new MultiValueDictionary<Type, Type>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static void Reset()
@@ -34,13 +31,6 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             INSTANTIABLE_TYPES.Clear();
             CURRENTLY_LOADING_DEPENDENCIES.Clear();
             IS_INITIALIZED = false;
-            ATTRIBUTES_TO_SEARCH_FOR.Clear();
-            TYPES_BY_ATTRIBUTES.Clear();
-        }
-
-        public static void AddAttributeToSearchFor<T>() where T : Attribute
-        {
-            ATTRIBUTES_TO_SEARCH_FOR.Add(typeof(T));
         }
 
         public static void Initialize(Assembly projectAssembly)
@@ -96,13 +86,6 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
                 var injectAttribute = (InjectAttribute) Attribute.GetCustomAttribute(type, typeof(InjectAttribute));
                 if (injectAttribute != null) AddInjectableType(type, injectAttribute, resolveMethodInfo);
-
-                foreach (var attributeType in ATTRIBUTES_TO_SEARCH_FOR)
-                {
-                    var customAttribute = Attribute.GetCustomAttribute(type, attributeType);
-                    if (customAttribute != null)
-                        TYPES_BY_ATTRIBUTES.Add(attributeType, type);
-                }
             }
         }
 
@@ -139,11 +122,6 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             if (!DEPENDENCIES.ContainsKey(type)) DEPENDENCIES[type] = new HashSet<object>();
             DEPENDENCIES[type].Add(objectToSet);
             return objectToSet;
-        }
-
-        public static HashSet<Type> GetTypesWithAttribute<T>() where T : Attribute
-        {
-            return TYPES_BY_ATTRIBUTES.GetValues(typeof(T), false);
         }
 
         public static T Resolve<T>() where T : class

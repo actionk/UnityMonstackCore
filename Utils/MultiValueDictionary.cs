@@ -129,7 +129,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         /// This method will return null (or an empty set if returnEmptySet is true) if the key wasn't found, or
         /// the values if key was found.
         /// </returns>
-        public HashSet<TValue> GetValues(TKey key, bool returnEmptySet)
+        public HashSet<TValue> GetValues(TKey key, bool returnEmptySet = false)
         {
             HashSet<TValue> toReturn = null;
             if (!base.TryGetValue(key, out toReturn) && returnEmptySet)
@@ -171,6 +171,19 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             var multiValueDictionary = new MultiValueDictionary<TKey, TValue>();
             foreach (var entry in values)
                 multiValueDictionary.Add(keySelector.Invoke(entry), entry);
+            return multiValueDictionary;
+        }
+
+        public static MultiValueDictionary<TKey, TSelectorValue> ToMultiValueDictionaryOfType<TKey, TValue, TSelectorValue>(this IEnumerable<TValue> values,
+            Func<TValue, TKey> keySelector)
+        {
+            var multiValueDictionary = new MultiValueDictionary<TKey, TSelectorValue>();
+            foreach (var entry in values)
+            {
+                if (entry is TSelectorValue castedValue)
+                    multiValueDictionary.Add(keySelector.Invoke(entry), castedValue);
+            }
+
             return multiValueDictionary;
         }
     }
