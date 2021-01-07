@@ -18,6 +18,16 @@ namespace Plugins.UnityMonstackCore.Providers
             return CheckForNullAndReturn(gameObject, "Gameobject wasn't loaded, path: " + key);
         }
 
+        public static T GetPrefab<T>(string key) where T: MonoBehaviour
+        {
+            var gameObject = Resources.Load<GameObject>("Prefabs/" + key);
+            CheckForNullAndReturn(gameObject, "Gameobject wasn't loaded, path: " + key);
+            if (gameObject != null)
+                return gameObject.GetComponent<T>();
+            
+            return null;
+        }
+
         public static Material GetMaterial(string key)
         {
             var material = Resources.Load<Material>("Materials/" + key);
