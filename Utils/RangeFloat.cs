@@ -9,7 +9,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         public float min;
         public float max;
 
-        public float Get(float t)
+        public float Evaluate(float t)
         {
             return Mathf.Lerp(min, max, t);
         }
