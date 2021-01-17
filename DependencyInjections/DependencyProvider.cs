@@ -67,7 +67,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             {
                 if (type.Assembly == assembly)
                 {
-                    UnityLogger.Log($"removing type {type}");
+                    UnityLogger.Debug($"removing type {type}");
                     var hashSet = DEPENDENCIES[type];
                     hashSet.Clear();
                     DEPENDENCIES.Remove(type);

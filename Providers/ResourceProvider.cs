@@ -18,7 +18,7 @@ namespace Plugins.UnityMonstackCore.Providers
             return CheckForNullAndReturn(gameObject, "Gameobject wasn't loaded, path: " + key);
         }
 
-        public static T GetPrefab<T>(string key) where T: MonoBehaviour
+        public static T GetPrefab<T>(string key) where T : MonoBehaviour
         {
             T prefab = Resources.Load<T>("Prefabs/" + key);
             CheckForNullAndReturn(prefab, "Prefab wasn't loaded, path: " + key);
@@ -56,6 +56,21 @@ namespace Plugins.UnityMonstackCore.Providers
         public static GameObject TryGetPrefab(string key)
         {
             return Resources.Load<GameObject>("Prefabs/" + key);
+        }
+
+        public static string GetApplicationDirectory()
+        {
+            var path = Application.dataPath;
+            if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.WindowsPlayer)
+            {
+                path += "/../../";
+            }
+            else if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                path += "/../";
+            }
+
+            return path;
         }
     }
 }
