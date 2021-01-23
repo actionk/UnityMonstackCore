@@ -25,19 +25,19 @@ namespace Plugins.UnityMonstackCore.Extensions
             return new float3(v.x, v.y, v.z);
         }
 
-        public static float3 ToFloat3(this int2 v)
+        public static float3 ToFloat3(this int2 v, float y = 0)
         {
-            return new float3(v.x, 0, v.y);
+            return new float3(v.x, y, v.y);
         }
 
-        public static float3 ToFloat3(this float2 v)
+        public static float3 ToFloat3(this float2 v, float y = 0)
         {
-            return new float3(v.x, 0, v.y);
+            return new float3(v.x, y, v.y);
         }
 
-        public static Vector3 ToVector3(this float2 v)
+        public static Vector3 ToVector3(this float2 v, float y = 0)
         {
-            return new Vector3(v.x, 0, v.y);
+            return new Vector3(v.x, y, v.y);
         }
 
         public static float2 ToFloat2(this float3 v)
