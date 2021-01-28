@@ -2,12 +2,16 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using Plugins.Shared.UnityMonstackCore.Utils;
+using UnityEditor;
 using UnityEngine;
 
 namespace Plugins.UnityMonstackCore.Loggers
 {
     public class UnityLogger
     {
+        public const string SETTING_GLOBAL_LOGGING_LEVEL = "Settings/Global/Logging/Level";
+
         public enum LoggingLevel
         {
             ERROR,
@@ -35,6 +39,14 @@ namespace Plugins.UnityMonstackCore.Loggers
             PREFIX = 0;
         }
 #endif
+
+        public static void Initialize()
+        {
+#if UNITY_EDITOR
+            var loggingLevel = EditorPrefsUtils.ReadEnum(SETTING_GLOBAL_LOGGING_LEVEL, LoggingLevel.INFO);
+            SetLevel(loggingLevel);
+#endif
+        }
 
         public static void SetLevel(LoggingLevel loggingLevel)
         {
