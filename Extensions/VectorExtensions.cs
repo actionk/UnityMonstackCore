@@ -15,6 +15,11 @@ namespace Plugins.UnityMonstackCore.Extensions
             return new float2(v.x, v.z);
         }
         
+        public static float3 ToFloat3(this Vector3 v)
+        {
+            return new float3(v.x, v.y, v.z);
+        }
+        
         public static float2 ToFloat2(this Vector2 v)
         {
             return new float2(v.x, v.y);
