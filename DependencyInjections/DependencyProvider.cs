@@ -62,16 +62,31 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                     INSTANTIABLE_TYPES.Remove(type);
             }
 
-            var createdTypes = DEPENDENCIES.Keys.ToArray();
-            foreach (var type in createdTypes)
+            var clearTypes = new List<Type>();
+            foreach (var keyValuePair in DEPENDENCIES)
             {
-                if (type.Assembly == assembly)
+                if (keyValuePair.Key.Assembly == assembly)
                 {
-                    UnityLogger.Debug($"removing type {type}");
-                    var hashSet = DEPENDENCIES[type];
-                    hashSet.Clear();
-                    DEPENDENCIES.Remove(type);
+                    clearTypes.Add(keyValuePair.Key);
+                    continue;
                 }
+
+                var clearObjects = new List<object>();
+                foreach (var value in keyValuePair.Value)
+                {
+                    if (value.GetType().Assembly == assembly)
+                        clearObjects.Add(value);
+                }
+
+                foreach (var objectToClear in clearObjects)
+                    keyValuePair.Value.Remove(objectToClear);
+            }
+
+            foreach (var type in clearTypes)
+            {
+                var hashSet = DEPENDENCIES[type];
+                hashSet.Clear();
+                DEPENDENCIES.Remove(type);
             }
         }
 
@@ -298,7 +313,8 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             return IS_INITIALIZED;
         }
 
-        private class InitializeOnStartup
+        private class
+            InitializeOnStartup
         {
             public MethodInfo MethodInfo;
             public Type Type;
