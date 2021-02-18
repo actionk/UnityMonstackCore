@@ -69,8 +69,8 @@ namespace Plugins.UnityMonstackCore.Extensions.Collections
             }
             else
             {
-                var newResult = presentCallback.Invoke(result, value);
-                dictionary[key] = newResult;
+                result = presentCallback.Invoke(result, value);
+                dictionary[key] = result;
             }
 
             return result;
