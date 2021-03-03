@@ -23,5 +23,10 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         {
             return Mathf.Lerp(min, max, t);
         }
+
+        public bool Contains(float value)
+        {
+            return value >= min && value <= max;
+        }
     }
 }
