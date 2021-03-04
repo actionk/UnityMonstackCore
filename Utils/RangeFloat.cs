@@ -28,5 +28,10 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         {
             return value >= min && value <= max;
         }
+
+        public float Random()
+        {
+            return UnityEngine.Random.Range(min, max);
+        }
     }
 }
