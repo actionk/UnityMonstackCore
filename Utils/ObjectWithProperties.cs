@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Plugins.Shared.UnityMonstackCore.Utils
 {
     public class ObjectWithProperties
     {
         private readonly Dictionary<Type, object> m_properties = new Dictionary<Type, object>();
+
+        public List<object> Properties => m_properties.Values.ToList();
 
         public void AddProperty<T>(T property)
         {
