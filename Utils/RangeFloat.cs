@@ -13,7 +13,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         [HorizontalGroup("Range", LabelWidth = 35)]
         public float max;
 
-        public RangeFloat(int min, int max)
+        public RangeFloat(float min, float max)
         {
             this.min = min;
             this.max = max;
