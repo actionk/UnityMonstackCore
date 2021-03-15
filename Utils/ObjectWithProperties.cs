@@ -10,6 +10,11 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
 
         public List<object> Properties => m_properties.Values.ToList();
 
+        public void AddProperty<T>() where T : new()
+        {
+            SetProperty(new T());
+        }
+
         public void AddProperty<T>(T property)
         {
             SetProperty(property);

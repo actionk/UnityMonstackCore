@@ -14,7 +14,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         /// <param name="nodes">All nodes of directed acyclic graph.</param>
         /// <param name="edges">All edges of directed acyclic graph.</param>
         /// <returns>Sorted node in topological order.</returns>
-        public static List<T> Sort<T>(HashSet<T> nodes, HashSet<Tuple<T, T>> edges) where T : IEquatable<T>
+        public static List<T> Sort<T>(HashSet<T> nodes, HashSet<Tuple<T, T>> edges)
         {
             // Empty list that will contain the sorted elements
             var L = new List<T>();
