@@ -5,6 +5,24 @@ namespace Plugins.UnityMonstackCore.Extensions
 {
     public static class ListExtensions
     {
+        public static int FirstIndexOf<T>(this IEnumerable<T> source, Predicate<T> predicate)
+        {
+            var index = 0;
+
+            using (IEnumerator<T> enumerator = source.GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    if (predicate.Invoke(enumerator.Current))
+                        return index;
+
+                    index++;
+                }
+            }
+
+            return -1;
+        }
+
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source,
             Func<TSource, TKey> selector)
         {
