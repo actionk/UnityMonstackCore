@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using Plugins.Shared.UnityMonstackCore.Utils;
-using UnityEditor;
 using UnityEngine;
 
 namespace Plugins.UnityMonstackCore.Loggers
@@ -11,6 +10,7 @@ namespace Plugins.UnityMonstackCore.Loggers
     public class UnityLogger
     {
         public const string SETTING_GLOBAL_LOGGING_LEVEL = "Settings/Global/Logging/Level";
+        public const string SETTING_GLOBAL_LOGGING_PREFIX = "Settings/Global/Logging/Prefix";
 
         public enum LoggingLevel
         {
@@ -28,6 +28,7 @@ namespace Plugins.UnityMonstackCore.Loggers
             TimeMillis = 2,
         }
 
+        private static long MILLIS_FROM_START;
         private static readonly Regex PATTERN_REGEX = new Regex("\\{\\}");
         private static Prefixes PREFIX = Prefixes.None;
         private static LoggingLevel LOGGING_LEVEL = LoggingLevel.DEBUG;
@@ -45,6 +46,11 @@ namespace Plugins.UnityMonstackCore.Loggers
 #if UNITY_EDITOR
             var loggingLevel = EditorPrefsUtils.ReadEnum(SETTING_GLOBAL_LOGGING_LEVEL, LoggingLevel.INFO);
             SetLevel(loggingLevel);
+
+            var loggingPrefix = EditorPrefsUtils.ReadEnum(SETTING_GLOBAL_LOGGING_PREFIX, Prefixes.None);
+            SetPrefix(loggingPrefix);
+
+            MILLIS_FROM_START = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 #endif
         }
 
@@ -73,7 +79,7 @@ namespace Plugins.UnityMonstackCore.Loggers
 
             if ((PREFIX & Prefixes.TimeMillis) != Prefixes.None)
             {
-                var time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                var time = DateTimeOffset.Now.ToUnixTimeMilliseconds() - MILLIS_FROM_START;
                 prefix.Append($"{(needsComma ? ", " : "")}{time}");
                 needsComma = true;
             }
