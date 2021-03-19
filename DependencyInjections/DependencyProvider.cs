@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Plugins.UnityMonstackCore.Loggers;
+using Unity.Entities;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -120,6 +121,14 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
         private static void AddInjectableType(Type type, InjectAttribute injectAttribute, MethodInfo resolveMethodInfo)
         {
+#if UNITY_EDITOR
+            if (typeof(ComponentSystem).IsAssignableFrom(type))
+            {
+                UnityLogger.Error($"Seems like somebody has to go to sleep if you add [Inject] to ComponentSystem: {type} :facepalm:");
+                return;
+            }
+#endif
+
             INJECTABLE_TYPES.Add(type);
 
             if (injectAttribute.CreateOnStartup)
