@@ -163,12 +163,10 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
         {
             LoadIfUnresolved(type);
             if (!DEPENDENCIES.ContainsKey(type))
-                throw new InvalidOperationException(string.Format("Failed to resolve type {0} as it's not injected",
-                    type));
+                throw new InvalidOperationException($"Failed to resolve type {type} as it's not injected");
+
             if (DEPENDENCIES[type].Count > 1)
-                throw new InvalidOperationException(
-                    string.Format("Tried to resolve a single object whereas there are a few implementing type {0}: {1}",
-                        type, DEPENDENCIES[type]));
+                throw new InvalidOperationException($"Tried to resolve a single object whereas there are a few implementing type {type}: {DEPENDENCIES[type]}");
 
             var enumerator = DEPENDENCIES[type].GetEnumerator();
             enumerator.MoveNext();
@@ -309,8 +307,13 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             }
 
             if (constructorInfos.Length > 1)
-                throw new Exception("Class " + type +
-                                    " has more than 1 default constructor. Please define one of those as [DefaultConstructor]");
+            {
+                var defaultConstructor = constructorInfos.FirstOrDefault(x => x.GetParameters().Length == 0);
+                if (defaultConstructor == null)
+                    throw new Exception($"Class {type} has more than 1 default constructor. Please define one of those as [{nameof(DefaultConstructorAttribute)}]");
+
+                return defaultConstructor;
+            }
 
             if (constructorInfos.Length == 1) return constructorInfos[0];
 

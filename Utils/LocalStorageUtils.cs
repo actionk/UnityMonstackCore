@@ -7,49 +7,6 @@ namespace Plugins.UnityMonstackCore.Utils
 {
     public class LocalStorageUtils
     {
-        public static void SaveSerializedObjectToFile(string pathToFile, object data)
-        {
-            var applicationPathToFile = GetApplicationPathToFile(pathToFile);
-            CreateDirectoryIfNotExistsWithActualPath(Path.GetDirectoryName(applicationPathToFile));
-
-            try
-            {
-                using (var writer = new StreamWriter(applicationPathToFile))
-                {
-                    var json = JsonUtility.ToJson(data);
-                    writer.Write(json);
-                }
-            }
-            catch (Exception)
-            {
-                var errorMessage = "Failed to save data to file " + applicationPathToFile;
-                UnityLogger.Error(errorMessage);
-                throw;
-            }
-        }
-
-        public static void SaveBytesToFile(FileSourceType fileSourceType, string pathToFile, byte[] bytes)
-        {
-            var applicationPathToFile = GetApplicationPathToFile(fileSourceType, pathToFile);
-            CreateDirectoryIfNotExistsWithActualPath(Path.GetDirectoryName(applicationPathToFile));
-
-            try
-            {
-                File.Delete(applicationPathToFile);
-                using (var writer = new BinaryWriter(File.OpenWrite(applicationPathToFile)))
-                {
-                    writer.Write(bytes);
-                    writer.Flush();
-                }
-            }
-            catch (Exception)
-            {
-                var errorMessage = "Failed to save bytes data to file " + applicationPathToFile;
-                UnityLogger.Error(errorMessage);
-                throw;
-            }
-        }
-
         public static string GetApplicationPathToFile(FileSourceType fileSourceType, string pathToFile)
         {
             switch (fileSourceType)
@@ -66,17 +23,6 @@ namespace Plugins.UnityMonstackCore.Utils
         public static string GetApplicationPathToFile(string pathToFile)
         {
             return Application.persistentDataPath + "/" + pathToFile;
-        }
-
-        public static void CreateDirectoryIfNotExists(string path)
-        {
-            var pathToDirectory = GetApplicationPathToFile(path);
-            CreateDirectoryIfNotExistsWithActualPath(pathToDirectory);
-        }
-
-        private static void CreateDirectoryIfNotExistsWithActualPath(string pathToDirectory)
-        {
-            if (!Directory.Exists(pathToDirectory)) Directory.CreateDirectory(pathToDirectory);
         }
 
         public static byte[] LoadBytesFromFile(string pathToFile)
@@ -106,17 +52,16 @@ namespace Plugins.UnityMonstackCore.Utils
 
         public static T LoadSerializedObjectFromFile<T>(string pathToFile)
         {
-            var applicationPathToFile = GetApplicationPathToFile(pathToFile);
             try
             {
-                using (var reader = new StreamReader(applicationPathToFile))
+                using (var reader = new StreamReader(pathToFile))
                 {
                     return JsonUtility.FromJson<T>(reader.ReadToEnd());
                 }
             }
             catch (Exception)
             {
-                var errorMessage = "Failed to load data from file " + applicationPathToFile;
+                var errorMessage = "Failed to load data from file " + pathToFile;
                 UnityLogger.Error(errorMessage);
                 throw;
             }

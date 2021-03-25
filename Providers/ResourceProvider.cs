@@ -57,20 +57,5 @@ namespace Plugins.UnityMonstackCore.Providers
         {
             return Resources.Load<GameObject>("Prefabs/" + key);
         }
-
-        public static string GetApplicationDirectory()
-        {
-            var path = Application.dataPath;
-            if (Application.platform == RuntimePlatform.OSXPlayer || Application.platform == RuntimePlatform.WindowsPlayer)
-            {
-                path += "/../../";
-            }
-            else if (Application.platform == RuntimePlatform.WindowsEditor)
-            {
-                path += "/../";
-            }
-
-            return path;
-        }
     }
 }
