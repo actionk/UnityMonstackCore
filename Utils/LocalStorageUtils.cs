@@ -67,6 +67,19 @@ namespace Plugins.UnityMonstackCore.Utils
             }
         }
 
+        public static T LoadJSONSerializedObjectFromData<T>(string data)
+        {
+            try
+            {
+                return JsonUtility.FromJson<T>(data);
+            }
+            catch (Exception e)
+            {
+                UnityLogger.Error("Failed to load serialized json data", e);
+                throw;
+            }
+        }
+
         public static Optional<T> LoadSerializedObjectFromFileIfExists<T>(string pathToFile)
         {
             var applicationPathToFile = GetApplicationPathToFile(pathToFile);
