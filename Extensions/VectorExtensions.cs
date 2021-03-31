@@ -9,6 +9,11 @@ namespace Plugins.UnityMonstackCore.Extensions
         {
             return new int2((int) math.floor(v.x), (int) math.floor(v.z));
         }
+        
+        public static int2 ToClosestInt2(this Vector3 v)
+        {
+            return new int2((int) math.round(v.x), (int) math.round(v.z));
+        }
 
         public static float2 ToFloat2(this Vector3 v)
         {
@@ -68,6 +73,11 @@ namespace Plugins.UnityMonstackCore.Extensions
         public static Vector2 ToVector2(this int2 v)
         {
             return new Vector2(v.x,  v.y);
+        }
+        
+        public static Vector3 ToVector3(this int2 v)
+        {
+            return new Vector3(v.x,  0, v.y);
         }
 
         public static float3 ToFloat3(this float2 v, float y = 0)
