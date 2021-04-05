@@ -9,7 +9,7 @@ namespace Plugins.UnityMonstackCore.Extensions
         {
             return new int2((int) math.floor(v.x), (int) math.floor(v.z));
         }
-        
+
         public static int2 ToClosestInt2(this Vector3 v)
         {
             return new int2((int) math.round(v.x), (int) math.round(v.z));
@@ -29,17 +29,17 @@ namespace Plugins.UnityMonstackCore.Extensions
         {
             return new Vector3(v.x, 0, v.y);
         }
-        
+
         public static float3 ToFloat3(this Vector3 v)
         {
             return new float3(v.x, v.y, v.z);
         }
-        
+
         public static float2 ToFloat2(this Vector2 v)
         {
             return new float2(v.x, v.y);
         }
-        
+
         public static float3 ToFloat3(this Vector2 v)
         {
             return new float3(v.x, 0.0f, v.y);
@@ -67,17 +67,27 @@ namespace Plugins.UnityMonstackCore.Extensions
 
         public static float2 ToFloat2(this int2 v)
         {
-            return new float2(v.x,  v.y);
+            return new float2(v.x, v.y);
         }
 
         public static Vector2 ToVector2(this int2 v)
         {
-            return new Vector2(v.x,  v.y);
+            return new Vector2(v.x, v.y);
         }
-        
+
+        public static Vector3 ToWorldGridPosition(this int2 v, float y = 0.0f)
+        {
+            return new Vector3(v.x + (v.x % 2 == 0 ? 0.5f : 0), y, v.y + (v.y % 2 == 0 ? 0.5f : 0));
+        }
+
+        public static Vector3 ToWorldGridPosition(this int2 v, int2 size, float y = 0.0f)
+        {
+            return new Vector3(v.x + (size.x % 2 == 0 ? 0.5f : 0), y, v.y + (size.y % 2 == 0 ? 0.5f : 0));
+        }
+
         public static Vector3 ToVector3(this int2 v)
         {
-            return new Vector3(v.x,  0, v.y);
+            return new Vector3(v.x, 0, v.y);
         }
 
         public static float3 ToFloat3(this float2 v, float y = 0)
@@ -89,17 +99,17 @@ namespace Plugins.UnityMonstackCore.Extensions
         {
             return new Vector3(v.x, y, v.y);
         }
-        
+
         public static Vector2 ToVector2(this float2 v)
         {
             return new Vector3(v.x, v.y);
         }
-        
+
         public static Vector3 ToVector3(this float3 v)
         {
             return new Vector3(v.x, v.y, v.z);
         }
-        
+
         public static Vector2 ToVector2(this float3 v)
         {
             return new Vector3(v.x, v.z);
