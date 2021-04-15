@@ -15,6 +15,11 @@ namespace Plugins.UnityMonstackCore.Extensions
             return new int2((int) math.round(v.x), (int) math.round(v.z));
         }
 
+        public static int2 ToClosestInt2(this float3 v)
+        {
+            return new int2((int) math.round(v.x), (int) math.round(v.z));
+        }
+
         public static float2 ToFloat2(this Vector3 v)
         {
             return new float2(v.x, v.z);
