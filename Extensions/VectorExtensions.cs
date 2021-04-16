@@ -80,14 +80,17 @@ namespace Plugins.UnityMonstackCore.Extensions
             return new Vector2(v.x, v.y);
         }
 
-        public static Vector3 ToWorldGridPosition(this int2 v, float y = 0.0f)
+        /// <summary>
+        /// Converting world 2D coordinates to grid coordinates
+        /// </summary>
+        /// <param name="v">Original coordinates</param>
+        /// <param name="size">Size of the building / object to rely on</param>
+        /// <param name="y">Y-coordinate (if needed)</param>
+        /// <param name="inverse">If true, it will apply 0.5f to even cells (not odd)</param>
+        /// <returns></returns>
+        public static Vector3 ToWorldGridPosition(this int2 v, int2 size, float y = 0.0f, bool inverse = false)
         {
-            return new Vector3(v.x + (v.x % 2 == 0 ? 0.5f : 0), y, v.y + (v.y % 2 == 0 ? 0.5f : 0));
-        }
-
-        public static Vector3 ToWorldGridPosition(this int2 v, int2 size, float y = 0.0f)
-        {
-            return new Vector3(v.x + (size.x % 2 == 0 ? 0.5f : 0), y, v.y + (size.y % 2 == 0 ? 0.5f : 0));
+            return new Vector3(v.x + (size.x % 2 == (inverse ? 0 : 1) ? 0.5f : 0), y, v.y + (size.y % 2 == (inverse ? 0 : 1) ? 0.5f : 0));
         }
 
         public static Vector3 ToVector3(this int2 v)
@@ -132,7 +135,7 @@ namespace Plugins.UnityMonstackCore.Extensions
 
         public static int2 ToInt2(this float3 v)
         {
-            return new int2((int) v.x, (int) v.z);
+            return new int2((int) math.floor(v.x), (int) math.floor(v.z));
         }
     }
 }
