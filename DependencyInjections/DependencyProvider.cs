@@ -17,7 +17,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
     public static class DependencyProvider
     {
         private static bool IS_INITIALIZED;
-        private static List<Type> INJECTABLE_TYPES = new List<Type>();
+        private static HashSet<Type> INJECTABLE_TYPES = new HashSet<Type>();
         private static List<InitializeOnStartup> INITIALIZE_ON_STARTUP = new List<InitializeOnStartup>();
         private static Dictionary<Type, HashSet<object>> DEPENDENCIES = new Dictionary<Type, HashSet<object>>();
         private static Dictionary<Type, HashSet<Type>> INSTANTIABLE_TYPES = new Dictionary<Type, HashSet<Type>>();
@@ -146,6 +146,11 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             if (!DEPENDENCIES.ContainsKey(type)) DEPENDENCIES[type] = new HashSet<object>();
             DEPENDENCIES[type].Add(objectToSet);
             return objectToSet;
+        }
+
+        public static bool IsResolvable<T>() where T : class
+        {
+            return DEPENDENCIES.ContainsKey(typeof(T)) || INJECTABLE_TYPES.Contains(typeof(T));
         }
 
         public static T Resolve<T>() where T : class

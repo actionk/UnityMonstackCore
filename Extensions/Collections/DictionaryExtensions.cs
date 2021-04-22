@@ -91,5 +91,27 @@ namespace Plugins.UnityMonstackCore.Extensions.Collections
 
             return result;
         }
+
+        public static bool TryGetValueCasted<TOutput>(this Dictionary<string, object> dictionary, string key, out TOutput output)
+        {
+            output = default;
+
+            if (!dictionary.TryGetValue(key, out var valueRead))
+                return false;
+
+            if (!(valueRead is TOutput valueParsed))
+                return false;
+
+            output = valueParsed;
+            return true;
+        }
+
+        public static TOutput GetValueCastedOrDefault<TOutput>(this Dictionary<string, object> dictionary, string key, TOutput defaultValue)
+        {
+            if (dictionary.TryGetValueCasted(key, out TOutput output))
+                return output;
+
+            return defaultValue;
+        }
     }
 }
