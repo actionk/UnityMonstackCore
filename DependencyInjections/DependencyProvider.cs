@@ -16,55 +16,49 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 {
     public static class DependencyProvider
     {
-        private static bool IS_INITIALIZED;
-        private static HashSet<Type> INJECTABLE_TYPES = new HashSet<Type>();
-        private static List<InitializeOnStartup> INITIALIZE_ON_STARTUP = new List<InitializeOnStartup>();
-        private static Dictionary<Type, HashSet<object>> DEPENDENCIES = new Dictionary<Type, HashSet<object>>();
-        private static Dictionary<Type, HashSet<Type>> INSTANTIABLE_TYPES = new Dictionary<Type, HashSet<Type>>();
-        private static HashSet<Type> CURRENTLY_LOADING_DEPENDENCIES = new HashSet<Type>();
+        private static HashSet<Assembly> InitializedAssemblies = new HashSet<Assembly>();
+        private static HashSet<Type> InjectableTypes = new HashSet<Type>();
+        private static List<InitializeOnStartup> InstantiateOnStartup = new List<InitializeOnStartup>();
+        private static Dictionary<Type, HashSet<object>> Instances = new Dictionary<Type, HashSet<object>>();
+        private static HashSet<Type> CurrentlyLoadingInstances = new HashSet<Type>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static void Reset()
         {
-            INJECTABLE_TYPES.Clear();
-            INITIALIZE_ON_STARTUP.Clear();
-            DEPENDENCIES.Clear();
-            INSTANTIABLE_TYPES.Clear();
-            CURRENTLY_LOADING_DEPENDENCIES.Clear();
-            IS_INITIALIZED = false;
+            InitializedAssemblies.Clear();
+            InjectableTypes.Clear();
+            InstantiateOnStartup.Clear();
+            Instances.Clear();
+            CurrentlyLoadingInstances.Clear();
         }
 
-        public static void Initialize(Assembly projectAssembly)
+        public static void Initialize(Assembly assembly)
         {
-            UnityLogger.Log($"Loading dependencies from assembly {projectAssembly.GetName().Name}");
+            if (InitializedAssemblies.Contains(assembly))
+                return;
 
-            InitializeForAssembly(projectAssembly);
+            InitializedAssemblies.Add(assembly);
 
-            IS_INITIALIZED = true;
+            UnityLogger.Log($"Loading dependencies from assembly {assembly.GetName().Name}");
 
-            foreach (var typeToInitializeOnStartup in INITIALIZE_ON_STARTUP)
+            InitializeForAssembly(assembly);
+
+            foreach (var typeToInitializeOnStartup in InstantiateOnStartup)
                 LoadIfUnresolved(typeToInitializeOnStartup.Type);
-            INITIALIZE_ON_STARTUP.Clear();
+            InstantiateOnStartup.Clear();
         }
 
         public static void Shutdown(Assembly assembly)
         {
-            var injectableTypes = INJECTABLE_TYPES.ToArray();
+            var injectableTypes = InjectableTypes.ToArray();
             foreach (var type in injectableTypes)
             {
                 if (type.Assembly == assembly)
-                    INJECTABLE_TYPES.Remove(type);
-            }
-
-            var instantiableTypes = INSTANTIABLE_TYPES.Keys.ToArray();
-            foreach (var type in instantiableTypes)
-            {
-                if (type.Assembly == assembly)
-                    INSTANTIABLE_TYPES.Remove(type);
+                    InjectableTypes.Remove(type);
             }
 
             var clearTypes = new List<Type>();
-            foreach (var keyValuePair in DEPENDENCIES)
+            foreach (var keyValuePair in Instances)
             {
                 if (keyValuePair.Key.Assembly == assembly)
                 {
@@ -85,9 +79,9 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
             foreach (var type in clearTypes)
             {
-                var hashSet = DEPENDENCIES[type];
+                var hashSet = Instances[type];
                 hashSet.Clear();
-                DEPENDENCIES.Remove(type);
+                Instances.Remove(type);
             }
         }
 
@@ -96,27 +90,9 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             var resolveMethodInfo = typeof(DependencyProvider).GetMethod("Resolve");
             foreach (var type in assembly.GetTypes())
             {
-                var instantiableAttribute =
-                    (InstantiableAttribute) Attribute.GetCustomAttribute(type, typeof(InstantiableAttribute));
-                if (instantiableAttribute != null) AddInstantiableType(type, instantiableAttribute, resolveMethodInfo);
-
                 var injectAttribute = (InjectAttribute) Attribute.GetCustomAttribute(type, typeof(InjectAttribute));
                 if (injectAttribute != null) AddInjectableType(type, injectAttribute, resolveMethodInfo);
             }
-        }
-
-        public static void InitializeForTests()
-        {
-            IS_INITIALIZED = true;
-            DEPENDENCIES.Clear();
-        }
-
-        private static void AddInstantiableType(Type type, InstantiableAttribute instantiableAttribute,
-            MethodInfo resolveMethodInfo)
-        {
-            if (!INSTANTIABLE_TYPES.ContainsKey(instantiableAttribute.BasicType))
-                INSTANTIABLE_TYPES[instantiableAttribute.BasicType] = new HashSet<Type>();
-            INSTANTIABLE_TYPES[type].Add(type);
         }
 
         private static void AddInjectableType(Type type, InjectAttribute injectAttribute, MethodInfo resolveMethodInfo)
@@ -128,11 +104,21 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 return;
             }
 #endif
-
-            INJECTABLE_TYPES.Add(type);
+            InjectableTypes.Add(type);
 
             if (injectAttribute.CreateOnStartup)
-                INITIALIZE_ON_STARTUP.Add(new InitializeOnStartup {MethodInfo = resolveMethodInfo, Type = type});
+                InstantiateOnStartup.Add(new InitializeOnStartup {MethodInfo = resolveMethodInfo, Type = type});
+
+            // if there are already interfaces initialized - instantiate those classes immediatelly
+            var instances = Instances.Keys.ToArray();
+            foreach (var instanceType in instances)
+            {
+                if (instanceType.IsAssignableFrom(type))
+                {
+                    LoadIfUnresolved(type);
+                    foreach (var injectable in Instances[type]) Add(instanceType, injectable);
+                }
+            }
         }
 
         public static T Add<T>(T objectToSet)
@@ -143,20 +129,33 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
         public static T Add<T>(Type type, T objectToSet)
         {
-            if (!DEPENDENCIES.ContainsKey(type)) DEPENDENCIES[type] = new HashSet<object>();
-            DEPENDENCIES[type].Add(objectToSet);
+            if (!Instances.ContainsKey(type)) Instances[type] = new HashSet<object>();
+            Instances[type].Add(objectToSet);
             return objectToSet;
         }
 
         public static bool IsResolvable<T>() where T : class
         {
-            return DEPENDENCIES.ContainsKey(typeof(T)) || INJECTABLE_TYPES.Contains(typeof(T));
+            return Instances.ContainsKey(typeof(T)) || InjectableTypes.Contains(typeof(T));
         }
 
         public static T Resolve<T>() where T : class
         {
             var type = typeof(T);
             return (T) ResolveByType(type);
+        }
+
+        public static T ResolveIfPossible<T>() where T : class
+        {
+            try
+            {
+                var type = typeof(T);
+                return (T) ResolveByType(type);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public static T ResolveByType<T>(Type type) where T : class
@@ -167,13 +166,13 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
         public static object ResolveByType(Type type)
         {
             LoadIfUnresolved(type);
-            if (!DEPENDENCIES.ContainsKey(type))
+            if (!Instances.ContainsKey(type))
                 throw new InvalidOperationException($"Failed to resolve type {type} as it's not injected");
 
-            if (DEPENDENCIES[type].Count > 1)
-                throw new InvalidOperationException($"Tried to resolve a single object whereas there are a few implementing type {type}: {DEPENDENCIES[type]}");
+            if (Instances[type].Count > 1)
+                throw new InvalidOperationException($"Tried to resolve a single object whereas there are a few implementing type {type}: {Instances[type]}");
 
-            var enumerator = DEPENDENCIES[type].GetEnumerator();
+            var enumerator = Instances[type].GetEnumerator();
             enumerator.MoveNext();
             return enumerator.Current;
         }
@@ -182,22 +181,16 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
         {
             var type = typeof(T);
             LoadIfUnresolved(type);
-            if (!DEPENDENCIES.ContainsKey(type)) return Enumerable.Empty<T>();
-            return DEPENDENCIES[type].Cast<T>().ToList();
-        }
-
-        public static IEnumerable<Type> GetInstantiableTypesByBasicType(Type basicType)
-        {
-            if (!INSTANTIABLE_TYPES.ContainsKey(basicType)) return Enumerable.Empty<Type>();
-            return INSTANTIABLE_TYPES[basicType];
+            if (!Instances.ContainsKey(type)) return Enumerable.Empty<T>();
+            return Instances[type].Cast<T>().ToList();
         }
 
         private static void LoadIfUnresolved(Type type)
         {
-            if (DEPENDENCIES.ContainsKey(type))
+            if (Instances.ContainsKey(type))
                 return;
 
-            if (CURRENTLY_LOADING_DEPENDENCIES.Contains(type))
+            if (CurrentlyLoadingInstances.Contains(type))
                 throw new AccessViolationException(
                     $"An attempt to load class that is being loaded. Please check that you don't have any dependency usage of class {type}" + " in its constructor");
 
@@ -214,7 +207,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
             if (Application.isEditor && !Application.isPlaying)
             {
-                if (!DEPENDENCIES.ContainsKey(type))
+                if (!Instances.ContainsKey(type))
                 {
                     UnityLogger.Debug($"Initializing dependency {type} inside the editor");
                     InstantiateObject(type);
@@ -223,13 +216,13 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 return;
             }
 
-            if (!IS_INITIALIZED)
+            if (!InitializedAssemblies.Contains(type.Assembly))
                 throw new AccessViolationException(
                     "Tried to resolve without Initializing " + typeof(DependencyProvider));
 
-            CURRENTLY_LOADING_DEPENDENCIES.Add(type);
+            CurrentlyLoadingInstances.Add(type);
 
-            foreach (var injectableType in INJECTABLE_TYPES)
+            foreach (var injectableType in InjectableTypes)
                 if (injectableType == type)
                 {
                     try
@@ -243,12 +236,12 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 }
                 else if (type.IsAssignableFrom(injectableType))
                 {
-                    if (!DEPENDENCIES.ContainsKey(injectableType)) LoadIfUnresolved(injectableType);
+                    if (!Instances.ContainsKey(injectableType)) LoadIfUnresolved(injectableType);
 
-                    foreach (var injectable in DEPENDENCIES[injectableType]) Add(type, injectable);
+                    foreach (var injectable in Instances[injectableType]) Add(type, injectable);
                 }
 
-            CURRENTLY_LOADING_DEPENDENCIES.Remove(type);
+            CurrentlyLoadingInstances.Remove(type);
         }
 
         private static void InstantiateObject(Type type)
@@ -325,13 +318,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             return null;
         }
 
-        public static bool IsInitialized()
-        {
-            return IS_INITIALIZED;
-        }
-
-        private class
-            InitializeOnStartup
+        private class InitializeOnStartup
         {
             public MethodInfo MethodInfo;
             public Type Type;
