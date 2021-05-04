@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -37,15 +38,19 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             if (InitializedAssemblies.Contains(assembly))
                 return;
 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             InitializedAssemblies.Add(assembly);
-
-            UnityLogger.Log($"Loading dependencies from assembly {assembly.GetName().Name}");
 
             InitializeForAssembly(assembly);
 
             foreach (var typeToInitializeOnStartup in InstantiateOnStartup)
                 LoadIfUnresolved(typeToInitializeOnStartup.Type);
             InstantiateOnStartup.Clear();
+
+            stopwatch.Stop();
+
+            UnityLogger.Log($"Loading dependencies from assembly [{assembly.GetName().Name}] done in [{stopwatch.ElapsedMilliseconds} ms]");
         }
 
         public static void Shutdown(Assembly assembly)
