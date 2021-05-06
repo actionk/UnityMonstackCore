@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Plugins.UnityMonstackCore.Loggers;
 
 namespace Plugins.Shared.UnityMonstackCore.Utils
 {
@@ -32,7 +33,13 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
 
         public T GetProperty<T>()
         {
-            return (T) m_properties[typeof(T)];
+            if (!m_properties.TryGetValue(typeof(T), out var property))
+            {
+                UnityLogger.Error($"There is no property [{typeof(T)}] in the object [{this}]");
+                return default;
+            }
+
+            return (T) property;
         }
 
         public bool HasProperty<T>()
