@@ -8,6 +8,23 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
 {
     public class VariableMap : IEnumerable<KeyValuePair<string, object>>
     {
+        [Serializable]
+        public class VariableCondition
+        {
+            public string name;
+            public object value;
+
+            public bool Validate(Dictionary<string, object> variables)
+            {
+                var currentValue = variables.GetValueOrDefault(name, default);
+                return Equals(currentValue, value);
+            }
+        }
+
+        public delegate void OnUpdatedDelegate();
+
+        public event OnUpdatedDelegate onUpdated;
+
         protected Dictionary<string, object> variables = new Dictionary<string, object>();
 
         public VariableMap()
@@ -20,28 +37,33 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
                 this.variables[keyValuePair.Key] = keyValuePair.Value;
         }
 
-        public VariableMap SetVariable(string key, object value)
+        public VariableMap SetValue(string key, object value)
         {
+            if (variables.TryGetValue(key, out var currentValue) && Equals(currentValue, value))
+                return this;
+
             variables[key] = value;
+            TriggerUpdate();
             return this;
         }
 
-        public VariableMap SetOrModifyVariable<T>(string key, T value, Func<T, T, T> modifyLambda) where T : class
+        public VariableMap SetOrModifyValue<T>(string key, T value, Func<T, T, T> modifyLambda) where T : class
         {
             if (variables.ContainsKey(key))
                 variables[key] = modifyLambda.Invoke(variables[key] as T, value);
             else
                 variables[key] = value;
 
+            TriggerUpdate();
             return this;
         }
 
-        public object GetVariable(string key)
+        public object GetValue(string key)
         {
             return variables[key];
         }
 
-        public T GetVariable<T>(string key)
+        public T GetValue<T>(string key)
         {
             try
             {
@@ -54,12 +76,27 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             }
         }
 
-        public bool HasVariable(string key, object value)
+        public bool TryGetValue<T>(string key, out T value)
         {
-            return variables.ContainsKey(key) && variables[key].Equals(value);
+            if (variables.TryGetValue(key, out var currentValue) && currentValue is T castedValue)
+            {
+                value = castedValue;
+                return true;
+            }
+
+            value = default;
+            return false;
         }
 
-        public T GetVariable<T>(string key, T defaultValue) 
+        public bool ContainsKeyAndValue(string key, object value)
+        {
+            if (!variables.TryGetValue(key, out var currentValue))
+                return false;
+
+            return Equals(variables[key], value);
+        }
+
+        public T GetValue<T>(string key, T defaultValue)
         {
             try
             {
@@ -72,11 +109,33 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             }
         }
 
-        public bool MatchesRequiredState(VariableMap requiredState)
+        public bool Matches(VariableCondition[] conditions)
+        {
+            foreach (var condition in conditions)
+            {
+                if (!condition.Validate(variables))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public bool Matches(VariableMap requiredState)
         {
             foreach (var stateVariable in requiredState)
             {
-                if (!HasVariable(stateVariable.Key, stateVariable.Value))
+                if (!ContainsKeyAndValue(stateVariable.Key, stateVariable.Value))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public bool Matches(Dictionary<string, object> contentStateVariables)
+        {
+            foreach (var stateVariable in contentStateVariables)
+            {
+                if (!ContainsKeyAndValue(stateVariable.Key, stateVariable.Value))
                     return false;
             }
 
@@ -93,11 +152,19 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             return variables.GetEnumerator();
         }
 
+        public VariableMap Remove(string key)
+        {
+            variables.Remove(key);
+            TriggerUpdate();
+            return this;
+        }
+
         public VariableMap Merge(VariableMap anotherState)
         {
             foreach (var stateVariable in anotherState)
-                SetVariable(stateVariable.Key, stateVariable.Value);
+                variables[stateVariable.Key] = stateVariable.Value;
 
+            TriggerUpdate();
             return this;
         }
 
@@ -111,6 +178,38 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         private VariableMap Clone()
         {
             return new VariableMap(variables);
+        }
+
+        public object this[string variable]
+        {
+            get => variables[variable];
+            set => variables[variable] = value;
+        }
+
+        public void Merge(Dictionary<string, object> dictionary)
+        {
+            var isChanged = false;
+            foreach (var variable in dictionary)
+            {
+                if (variable.Value == null)
+                {
+                    variables.Remove(variable.Key);
+                    isChanged = true;
+                }
+
+                if (!isChanged && variables.TryGetValue(variable.Key, out var currentValue) && currentValue == variable.Value)
+                    continue;
+
+                variables[variable.Key] = variable.Value;
+                isChanged = true;
+            }
+
+            TriggerUpdate();
+        }
+
+        private void TriggerUpdate()
+        {
+            onUpdated?.Invoke();
         }
     }
 }
