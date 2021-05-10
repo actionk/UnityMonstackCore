@@ -59,11 +59,11 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             return variables.ContainsKey(key) && variables[key].Equals(value);
         }
 
-        public T GetVariable<T>(string key, T defaultValue) where T : class
+        public T GetVariable<T>(string key, T defaultValue) 
         {
             try
             {
-                return variables.GetValueOrDefault(key, defaultValue) as T;
+                return (T)variables.GetValueOrDefault(key, defaultValue);
             }
             catch (InvalidCastException e)
             {
