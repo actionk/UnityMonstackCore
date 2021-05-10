@@ -14,9 +14,9 @@ namespace Plugins.UnityMonstackCore.Loggers
 
         public enum LoggingLevel
         {
+            INFO,
             ERROR,
             WARNING,
-            INFO,
             DEBUG
         }
 
@@ -86,6 +86,27 @@ namespace Plugins.UnityMonstackCore.Loggers
 
             prefix.Append("] ");
             return prefix.ToString();
+        }
+
+        public static void Log(LoggingLevel level, string s)
+        {
+            switch (level)
+            {
+                case LoggingLevel.INFO:
+                    Log(s);
+                    return;
+
+                case LoggingLevel.DEBUG:
+                    Debug(s);
+                    return;
+
+                case LoggingLevel.ERROR:
+                    Error(s);
+                    return;
+                case LoggingLevel.WARNING:
+                    Warning(s);
+                    return;
+            }
         }
 
         public static void Log(string s)
