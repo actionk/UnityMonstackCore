@@ -14,9 +14,9 @@ namespace Plugins.UnityMonstackCore.Loggers
 
         public enum LoggingLevel
         {
-            INFO,
             ERROR,
             WARNING,
+            INFO,
             DEBUG
         }
 
