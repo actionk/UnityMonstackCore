@@ -100,7 +100,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         {
             try
             {
-                return (T)variables.GetValueOrDefault(key, defaultValue);
+                return (T) variables.GetValueOrDefault(key, defaultValue);
             }
             catch (InvalidCastException e)
             {
@@ -111,6 +111,9 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
 
         public bool Matches(VariableCondition[] conditions)
         {
+            if (conditions == null)
+                return true;
+
             foreach (var condition in conditions)
             {
                 if (!condition.Validate(variables))
@@ -197,7 +200,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
                     isChanged = true;
                 }
 
-                if (!isChanged && variables.TryGetValue(variable.Key, out var currentValue) && currentValue == variable.Value)
+                if (!isChanged && variables.TryGetValue(variable.Key, out var currentValue) && Equals(currentValue, variable.Value))
                     continue;
 
                 variables[variable.Key] = variable.Value;
