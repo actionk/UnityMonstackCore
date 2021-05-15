@@ -128,6 +128,16 @@ namespace Plugins.UnityMonstackCore.Extensions
             return new float2(v.x, v.z);
         }
 
+        public static float3 WithY(this float3 v, float y)
+        {
+            return new float3(v.x, y, v.z);
+        }
+
+        public static Vector3 WithY(this Vector3 v, float y)
+        {
+            return new Vector3(v.x, y, v.z);
+        }
+
         public static int2 ToInt2(this float2 v)
         {
             return new int2((int) math.floor(v.x), (int) math.floor(v.y));
