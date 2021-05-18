@@ -109,6 +109,14 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             }
         }
 
+        public T GetValueOrDefault<T>(string parameter, T defaultValue)
+        {
+            if (!variables.TryGetValue(parameter, out var value))
+                return defaultValue;
+
+            return (T) value;
+        }
+
         public bool Matches(VariableCondition[] conditions)
         {
             if (conditions == null)
