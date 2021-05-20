@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Unity.Mathematics;
+using Random = System.Random;
 
 namespace Plugins.Shared.UnityMonstackCore.Extensions
 {
@@ -31,6 +33,25 @@ namespace Plugins.Shared.UnityMonstackCore.Extensions
             if (rand is null)
                 throw new ArgumentNullException(nameof(rand));
             return (float)rand.NextDouble();
+        }
+        
+        /// <summary>
+        /// Returns a random floating-point inside circle within some radius.
+        /// </summary>
+        /// <param name="radius">Radius of circle.</param>
+        /// <returns>A single-precision floating point number that is greater than or equal to 0.0f, and less than 1.0f.</returns>
+        public static float2 Next2DPointInRadius(this Random rand, float radius)
+        {
+            if (rand is null)
+                throw new ArgumentNullException(nameof(rand));
+
+            var r = radius * math.sqrt(rand.NextFloat());
+            var theta = rand.NextFloat() * 2 * math.PI;
+
+            var x = r * math.cos(theta);
+            var y = r * math.sin(theta);
+
+            return new float2(x, y);
         }
 
         /// <summary>
