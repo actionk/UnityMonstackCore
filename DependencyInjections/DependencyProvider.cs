@@ -170,6 +170,9 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
         public static object ResolveByType(Type type)
         {
+            if (Application.isEditor && !Application.isPlaying)
+                return InstantiateObject(type);
+
             LoadIfUnresolved(type);
             if (!Instances.ContainsKey(type))
                 throw new InvalidOperationException($"Failed to resolve type {type} as it's not injected");
@@ -177,7 +180,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             if (Instances[type].Count > 1)
                 throw new InvalidOperationException($"Tried to resolve a single object whereas there are a few implementing type {type}: {Instances[type]}");
 
-            var enumerator = Instances[type].GetEnumerator();
+            using var enumerator = Instances[type].GetEnumerator();
             enumerator.MoveNext();
             return enumerator.Current;
         }
@@ -210,17 +213,6 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 return;
             }
 
-            if (Application.isEditor && !Application.isPlaying)
-            {
-                if (!Instances.ContainsKey(type))
-                {
-                    UnityLogger.Debug($"Initializing dependency {type} inside the editor");
-                    InstantiateObject(type);
-                }
-
-                return;
-            }
-
             if (!InitializedAssemblies.Contains(type.Assembly))
                 throw new AccessViolationException(
                     "Tried to resolve without Initializing " + typeof(DependencyProvider));
@@ -232,7 +224,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 {
                     try
                     {
-                        InstantiateObject(type);
+                        InstantiateAndRegisterObject(type);
                     }
                     catch (Exception ex)
                     {
@@ -249,7 +241,13 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
             CurrentlyLoadingInstances.Remove(type);
         }
 
-        private static void InstantiateObject(Type type)
+        private static void InstantiateAndRegisterObject(Type type)
+        {
+            var newObject = InstantiateObject(type);
+            Add(type, newObject);
+        }
+
+        private static object InstantiateObject(Type type)
         {
             object newObject;
 
@@ -297,7 +295,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                 }
             }
 
-            Add(type, newObject);
+            return newObject;
         }
 
         private static ConstructorInfo GetAutowiredOrDefaultConstructor(Type type)
