@@ -170,9 +170,6 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
         public static object ResolveByType(Type type)
         {
-            // if (Application.isEditor && !Application.isPlaying)
-            //     return InstantiateObject(type);
-            
             LoadIfUnresolved(type);
             if (!Instances.ContainsKey(type))
                 throw new InvalidOperationException($"Failed to resolve type {type} as it's not injected");
@@ -215,6 +212,12 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
             if (!InitializedAssemblies.Contains(type.Assembly))
             {
+                if (Application.isEditor && !Application.isPlaying)
+                {
+                    InstantiateAndRegisterObject(type);
+                    return;
+                }
+
                 throw new AccessViolationException(
                     "Tried to resolve without Initializing " + typeof(DependencyProvider));
             }
