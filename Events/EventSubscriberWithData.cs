@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Plugins.Shared.UnityMonstackCore.Services.Event
+namespace Plugins.Shared.UnityMonstackCore.Events
 {
-    public class TypeEventSubscriberWithData<T> : ITypedEventSubscriber
+    public class EventSubscriberWithData<T> : IEventSubscriber
     {
         public object Target { get; }
         
         private readonly Action<T> m_callback; 
 
-        public TypeEventSubscriberWithData(Action<T> callback, object target = null)
+        public EventSubscriberWithData(Action<T> callback, object target = null)
         {
             Target = target;
             m_callback = callback;
