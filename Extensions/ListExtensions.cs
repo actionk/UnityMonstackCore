@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Plugins.UnityMonstackCore.Extensions
 {
@@ -28,6 +29,8 @@ namespace Plugins.UnityMonstackCore.Extensions
         {
             return source.MinBy(selector, null);
         }
+        
+        public static IEnumerable<TSource> Shuffle<TSource>(this IEnumerable<TSource> source) => source.OrderBy(a => Guid.NewGuid());
 
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source,
             Func<TSource, TKey> selector, IComparer<TKey> comparer)
