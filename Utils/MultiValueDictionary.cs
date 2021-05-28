@@ -84,7 +84,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        public bool Remove(TKey key, TValue value, bool notRemoveKeyIfEmpty = false)
+        public bool Remove(TKey key, TValue value)
         {
             HashSet<TValue> container = null;
             if (this.TryGetValue(key, out container))
