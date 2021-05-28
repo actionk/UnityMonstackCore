@@ -289,7 +289,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
 
             foreach (var method in newObject.GetType().GetMethods())
             {
-                var afterInstantiationAttribute = method.GetCustomAttribute<OnCreate>();
+                var afterInstantiationAttribute = method.GetCustomAttribute<OnInstantiation>();
                 if (afterInstantiationAttribute != null)
                 {
                     if (method.GetParameters().Length > 0)

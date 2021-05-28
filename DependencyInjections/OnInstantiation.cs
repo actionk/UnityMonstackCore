@@ -7,7 +7,7 @@ using System;
 namespace Plugins.UnityMonstackCore.DependencyInjections
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class OnCreate : Attribute
+    public class OnInstantiation : Attribute
     {
     }
 }
