@@ -30,5 +30,13 @@ namespace Plugins.UnityMonstackCore.Extensions.Collections
                 sum += selector.Invoke(entry);
             return sum;
         }
+
+        public static float4 Sum<TSource>(this IEnumerable<TSource> source, Func<TSource, float4> selector)
+        {
+            var sum = float4.zero;
+            foreach (var entry in source)
+                sum += selector.Invoke(entry);
+            return sum;
+        }
     }
 }
