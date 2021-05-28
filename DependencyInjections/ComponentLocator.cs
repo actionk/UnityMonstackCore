@@ -2,7 +2,7 @@
 
 namespace Plugins.UnityMonstackCore.DependencyInjections
 {
-    public class ComponentResolver<T> where T : Component
+    public class ComponentLocator<T> where T : Component
     {
         private T m_instance;
 
