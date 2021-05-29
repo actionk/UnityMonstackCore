@@ -2,7 +2,9 @@
 
 using System;
 using System.Collections.Generic;
+using Plugins.Shared.UnityMonstackCore.Extensions;
 using Unity.Mathematics;
+using UnityEngine;
 
 #endregion
 
@@ -31,7 +33,15 @@ namespace Plugins.UnityMonstackCore.Extensions.Collections
             return sum;
         }
 
-        public static float4 Sum<TSource>(this IEnumerable<TSource> source, Func<TSource, float4> selector)
+        public static Color SumColor<TSource>(this IEnumerable<TSource> source, Func<TSource, Color> selector)
+        {
+            var sum = float4.zero;
+            foreach (var entry in source)
+                sum += selector.Invoke(entry).ToFloat4();
+            return sum.ToColor();
+        }
+
+        public static float4 SumFloat4<TSource>(this IEnumerable<TSource> source, Func<TSource, float4> selector)
         {
             var sum = float4.zero;
             foreach (var entry in source)
