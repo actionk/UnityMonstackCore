@@ -16,8 +16,10 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
 
             public bool Validate(Dictionary<string, object> variables)
             {
-                var currentValue = variables.GetValueOrDefault(name, default);
-                return Equals(currentValue, value);
+                if (!variables.TryGetValue(name, out object output)) {
+                    return value == null || value is bool boolean && !boolean;
+                }
+                return Equals(output, value);
             }
         }
 
@@ -124,8 +126,9 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
 
             foreach (var condition in conditions)
             {
-                if (!condition.Validate(variables))
+                if (!condition.Validate(variables)) {
                     return false;
+                }
             }
 
             return true;
