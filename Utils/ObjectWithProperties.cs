@@ -44,6 +44,11 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             return (T) property;
         }
 
+        public T GetPropertyUnsafe<T>()
+        {
+            return (T)m_properties[typeof(T)];
+        }
+
         public bool HasProperty<T>()
         {
             return HasProperty(typeof(T));
