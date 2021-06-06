@@ -100,6 +100,28 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             return false;
         }
 
+        /// <summary>
+        /// Removes the specified value for the specified key. It will leave the key in the dictionary.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        public bool RemoveAll(Func<TKey, bool> callback)
+        {
+            var removed = false;
+
+            var keys = Keys;
+            foreach (var key in keys)
+            {
+                if (callback.Invoke(key))
+                {
+                    Remove(key);
+                    removed = true;
+                }
+            }
+
+            return removed;
+        }
+
 
         /// <summary>
         /// Merges the specified multivaluedictionary into this instance.
