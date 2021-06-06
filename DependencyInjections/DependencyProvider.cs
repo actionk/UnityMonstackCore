@@ -218,8 +218,7 @@ namespace Plugins.UnityMonstackCore.DependencyInjections
                     return;
                 }
 
-                throw new AccessViolationException(
-                    "Tried to resolve without Initializing " + typeof(DependencyProvider));
+                throw new AccessViolationException($"Tried to resolve [{type}] without Initializing target assembly [{type.Assembly}]");
             }
 
             CurrentlyLoadingInstances.Add(type);
