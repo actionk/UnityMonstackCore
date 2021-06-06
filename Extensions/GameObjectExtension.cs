@@ -7,7 +7,7 @@ namespace Plugins.UnityMonstackCore.Extensions
 {
     public static class GameObjectExtension
     {
-        public static T AddComponentIfNotExists<T>(this GameObject gameObject) where T : MonoBehaviour
+        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : MonoBehaviour
         {
             var existingComponent = gameObject.GetComponent<T>();
             if (existingComponent == null)
