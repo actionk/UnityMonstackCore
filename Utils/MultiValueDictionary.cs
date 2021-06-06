@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Plugins.Shared.UnityMonstackCore.Utils
 {
@@ -109,7 +110,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         {
             var removed = false;
 
-            var keys = Keys;
+            var keys = Keys.ToArray();
             foreach (var key in keys)
             {
                 if (callback.Invoke(key))
