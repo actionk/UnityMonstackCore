@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Plugins.UnityMonstackCore.DependencyInjections
+namespace Plugins.Shared.UnityMonstackCore.DependencyInjections
 {
     public class ComponentLocator<T> where T : Component
     {
