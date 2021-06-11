@@ -32,6 +32,14 @@ namespace Plugins.UnityMonstackCore.Extensions
         {
             return source.MinBy(selector, null);
         }
+
+        public static TSource Random<TSource>(this IEnumerable<TSource> sources)
+        {
+            if (!sources.Any())
+                return default;
+
+            return sources.ElementAt(UnityEngine.Random.Range(0, sources.Count()));
+        }
         
         public static IEnumerable<TSource> Shuffle<TSource>(this IEnumerable<TSource> source) => source.OrderBy(a => Guid.NewGuid());
 

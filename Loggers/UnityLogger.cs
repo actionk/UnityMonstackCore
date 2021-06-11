@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using Plugins.Shared.Netcode.Core.Time;
 using Plugins.Shared.UnityMonstackCore.Utils;
 using UnityEngine;
 
@@ -133,10 +134,15 @@ namespace Plugins.UnityMonstackCore.Loggers
             Info(prefix, message, arguments);
         }
 
-        public static void Debug(string message)
+        private static string GetGameTimeMessage()
+        {
+            return $"GAME_TIME:{NetworkGameTime.ElapsedMilliseconds} ";
+        }
+
+        public static void Debug(string message, bool showGameTime = false)
         {
             if (LOGGING_LEVEL < LoggingLevel.DEBUG) return;
-            Info(message);
+            Info((showGameTime ? GetGameTimeMessage() : "") + message);
         }
 
         public static void Debug(string message, [NotNull] params object[] arguments)
