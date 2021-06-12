@@ -40,7 +40,7 @@ namespace Plugins.UnityMonstackCore.Extensions
 
             return sources.ElementAt(UnityEngine.Random.Range(0, sources.Count()));
         }
-        
+
         public static IEnumerable<TSource> Shuffle<TSource>(this IEnumerable<TSource> source) => source.OrderBy(a => Guid.NewGuid());
 
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source,
@@ -119,7 +119,7 @@ namespace Plugins.UnityMonstackCore.Extensions
                     value.RemoveAt(i--);
             }
         }
-        
+
         public static string ToDebugString<T>(this List<T> value)
         {
             var stringValues = new string[value.Count];
