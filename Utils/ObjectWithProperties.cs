@@ -1,91 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Plugins.UnityMonstackCore.Loggers;
 
 namespace Plugins.Shared.UnityMonstackCore.Utils
 {
-    public class ObjectWithProperties
+    public class ObjectWithProperties<TProperty> : AObjectWithProperties<Type, TProperty>, IObjectWithPropertiesByType<TProperty>
     {
-        private readonly Dictionary<Type, object> m_properties = new Dictionary<Type, object>();
-
-        public List<object> Properties => m_properties.Values.ToList();
-
-        public T AddProperty<T>() where T : new()
+        protected override Type GetKeyByData<T>(T data)
         {
-            var property = new T();
-            SetProperty(property);
-            return property;
+            return typeof(T);
         }
 
-        public void AddProperty<T>(T property)
+        public T GetProperty<T>() where T : TProperty
         {
-            SetProperty(property);
+            return (T) GetProperty(typeof(T));
         }
 
-        public void SetProperty<T>(T property)
+        public bool RemoveProperty<T>() where T : TProperty
         {
-            m_properties[typeof(T)] = property;
+            return RemoveProperty(typeof(T));
         }
 
-        public bool RemoveProperty<T>()
+        public T GetOrCreateProperty<T>() where T : TProperty, new() 
         {
-            return m_properties.Remove(typeof(T));
-        }
-
-        public T GetProperty<T>()
-        {
-            if (!m_properties.TryGetValue(typeof(T), out var property))
-            {
-                UnityLogger.Error($"There is no property [{typeof(T)}] in the object [{this}]");
-                return default;
-            }
-
-            return (T) property;
-        }
-
-        public T GetPropertyUnsafe<T>()
-        {
-            return (T)m_properties[typeof(T)];
-        }
-
-        public bool HasProperty<T>()
-        {
-            return HasProperty(typeof(T));
-        }
-
-        public bool HasProperty(Type type)
-        {
-            return m_properties.ContainsKey(type);
-        }
-
-        public bool TryGetProperty<T>(out T property)
-        {
-            bool hasProperty = m_properties.TryGetValue(typeof(T), out object objectProperty);
-            property = (T) objectProperty;
-            return hasProperty;
-        }
-
-        public T GetOrCreateProperty<T>(Func<T> createCallback)
-        {
+            properties ??= new Dictionary<Type, TProperty>();
+            
             var key = typeof(T);
-            if (m_properties.TryGetValue(key, out object value))
-                return (T) value;
+            if (properties.TryGetValue(key, out var property))
+                return (T) property;
+
+            var value = new T();
+            properties[key] = value;
+            return value;
+        }
+        
+        public T GetPropertyOrDefault<T>() where T : TProperty
+        {
+            if (properties == null) return default;
+
+            var key = typeof(T);
+            return properties.ContainsKey(key) ? (T) properties[key] : default;
+        }
+        
+        public T GetOrCreateProperty<T>(Func<T> createCallback) where T : TProperty
+        {
+            properties ??= new Dictionary<Type, TProperty>();
+
+            var key = typeof(T);
+            if (properties.TryGetValue(key, out var property))
+                return (T) property;
 
             var newValue = createCallback.Invoke();
-            m_properties[key] = newValue;
+            properties[key] = newValue;
             return newValue;
         }
 
-        public T GetOrCreateProperty<T>() where T : new()
+        public T GetPropertyOrDefault<T>(T defaultValue) where T : TProperty
         {
-            var key = typeof(T);
-            if (m_properties.TryGetValue(key, out object value))
-                return (T) value;
+            if (properties == null)
+                return defaultValue;
 
-            var newValue = new T();
-            m_properties[key] = newValue;
-            return newValue;
+            var key = typeof(T);
+            if (!properties.TryGetValue(key, out var value))
+                return defaultValue;
+
+            return (T) value;
+        }
+
+        public bool HasProperty<T>() where T : TProperty
+        {
+            if (properties == null) return false;
+
+            var key = typeof(T);
+            return properties.ContainsKey(key);
         }
     }
 }
