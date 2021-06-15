@@ -15,7 +15,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             return (T) GetProperty(typeof(T));
         }
 
-        public bool RemoveProperty<T>() where T : TProperty
+        public virtual bool RemoveProperty<T>() where T : TProperty
         {
             return RemoveProperty(typeof(T));
         }
