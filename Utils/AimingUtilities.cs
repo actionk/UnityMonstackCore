@@ -26,7 +26,7 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
             return true;
         }
         
-        public static int SolveQuadratic(float a, float b, float c, out float root1, out float root2)
+        private static int SolveQuadratic(float a, float b, float c, out float root1, out float root2)
         {
             var discriminant = b * b - 4 * a * c;
             if (discriminant < 0)
