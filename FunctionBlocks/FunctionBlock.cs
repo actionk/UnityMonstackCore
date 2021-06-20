@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using Sirenix.Utilities;
-using UnityEngine;
 
 namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
 {
-    [Serializable]
+    [Serializable, ShowOdinSerializedPropertiesInInspector]
     public class FunctionBlock<T> where T : class
     {
-        [OnValueChanged(nameof(OnTypeChanged))]
-        [ValueDropdown(nameof(GetTypes))]
+        public static FunctionBlock<T> CreateInstance()
+        {
+            return new FunctionBlock<T>();
+        }
+        
+        [OdinSerialize, OnValueChanged(nameof(OnTypeChanged)), ValueDropdown(nameof(GetTypes))]
         public string type = "";
 
-        [SerializeReference, ShowInInspector, InlineProperty, HideReferenceObjectPicker, HideLabel, ShowIf(nameof(IsDataShown))]
+        [NonSerialized, OdinSerialize, ShowInInspector, InlineProperty, HideReferenceObjectPicker, HideLabel, ShowIf(nameof(IsDataShown))]
         public T data;
 
         private bool IsDataShown => data != null;
