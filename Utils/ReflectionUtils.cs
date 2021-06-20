@@ -61,5 +61,10 @@ namespace Plugins.Shared.UnityMonstackCore.Utils
         {
             return GetTypesWithInterface(AppDomain.CurrentDomain, typeof(T), excludeAbstract);
         }
+
+        public static Type[] GetAllTypesWithInterface(Type type, bool excludeAbstract = false)
+        {
+            return GetTypesWithInterface(AppDomain.CurrentDomain, type, excludeAbstract);
+        }
     }
 }
