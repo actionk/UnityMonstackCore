@@ -13,14 +13,14 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
         {
             return new FunctionBlock<T>();
         }
-        
+
         [OdinSerialize, OnValueChanged(nameof(OnTypeChanged)), ValueDropdown(nameof(GetTypes))]
         public string type = "";
 
-        [NonSerialized, OdinSerialize, ShowInInspector, InlineProperty, HideReferenceObjectPicker, HideLabel, ShowIf(nameof(IsDataShown))]
+        [NonSerialized, OdinSerialize, ShowInInspector, InlineProperty, HideReferenceObjectPicker, HideLabel, HideIf(nameof(IsEmpty))]
         public T data;
 
-        private bool IsDataShown => data != null;
+        public bool IsEmpty => data == null;
         protected virtual IEnumerable<ValueDropdownItem> GetTypes => FunctionBlocksManager.Instance.GetValueDropdownByType<T>();
 
         public FunctionBlock()
