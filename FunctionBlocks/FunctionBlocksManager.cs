@@ -57,13 +57,14 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
 
             var cacheList = cache
                 .Select(x => new ValueDropdownItem(x.Key, x.Value != null ? x.Key : ""))
+                .OrderBy(x => x.Text)
                 .ToList();
 
             var functionBlockAttribute = targetType.GetCustomAttribute<FunctionBlockAttribute>();
             if (functionBlockAttribute != null)
             {
                 if (functionBlockAttribute.EmptyValueDropdownKey != null)
-                    cacheList.Add(new ValueDropdownItem(functionBlockAttribute.EmptyValueDropdownKey, EMPTY_STRING));
+                    cacheList.Insert(0, new ValueDropdownItem(functionBlockAttribute.EmptyValueDropdownKey, EMPTY_STRING));
             }
 
             m_valueDropdownCache[name] = cacheList;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using Sirenix.Utilities;
+using UnityEngine;
 
 namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
 {
@@ -14,7 +15,10 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
             return new FunctionBlock<T>();
         }
 
-        [OdinSerialize, OnValueChanged(nameof(OnTypeChanged)), ValueDropdown(nameof(GetTypes))]
+        [OdinSerialize, HideInInspector]
+        public bool disableTypeSelection;
+
+        [OdinSerialize, OnValueChanged(nameof(OnTypeChanged)), ValueDropdown(nameof(GetTypes)), HideIf(nameof(disableTypeSelection))]
         public string type = "";
 
         [NonSerialized, OdinSerialize, ShowInInspector, InlineProperty, HideReferenceObjectPicker, HideLabel, HideIf(nameof(IsEmpty))]
@@ -42,9 +46,16 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
                 return;
             }
 
-            var typeOfBlock = FunctionBlocksManager.Instance.GetBlockTypesByType<T>()[type];
+            SetType(type);
+        }
+
+        public void SetType(string newType)
+        {
+            var typeOfBlock = FunctionBlocksManager.Instance.GetBlockTypesByType<T>()[newType];
             if (data != null && typeOfBlock == data.GetType())
                 return;
+
+            type = newType;
 
             if (typeOfBlock != null)
                 data = (T) Activator.CreateInstance(typeOfBlock);
