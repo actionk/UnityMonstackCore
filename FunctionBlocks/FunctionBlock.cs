@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Plugins.UnityMonstackCore.Loggers;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using Sirenix.Utilities;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+
+#endif
 
 namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
 {
@@ -19,6 +24,7 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
         public bool disableTypeSelection;
 
         [OdinSerialize, OnValueChanged(nameof(OnTypeChanged)), ValueDropdown(nameof(GetTypes)), HideIf(nameof(disableTypeSelection))]
+        [InlineButton(nameof(OpenSource), "?")]
         public string type = "";
 
         [NonSerialized, OdinSerialize, ShowInInspector, InlineProperty, HideReferenceObjectPicker, HideLabel, HideIf(nameof(IsEmpty))]
@@ -26,6 +32,21 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
 
         public bool IsEmpty => data == null;
         protected virtual IEnumerable<ValueDropdownItem> GetTypes => FunctionBlocksManager.Instance.GetValueDropdownByType<T>();
+
+        private void OpenSource()
+        {
+#if UNITY_EDITOR
+            if (data == null)
+            {
+                UnityLogger.Log("No type defined yet");
+                return;
+            }
+
+            var typeOfBlock = FunctionBlocksManager.Instance.GetBlockTypesByType<T>()[type];
+            var asset = AssetDatabase.LoadAssetAtPath("Assets/" + typeOfBlock.Namespace!.Replace(".", "/") + "/" + typeOfBlock.Name + ".cs", typeof(MonoScript));
+            AssetDatabase.OpenAsset(asset);
+#endif
+        }
 
         public FunctionBlock()
         {
