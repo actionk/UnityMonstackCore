@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Plugins.Shared.UnityMonstackContentLoader.JSON.Converter.Identifiers;
+using Plugins.Shared.UnityMonstackCore.Attributes;
 using Plugins.Shared.UnityMonstackCore.Utils;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;

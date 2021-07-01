@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-namespace Client.Utils.VisualSimulation.Utils
+namespace Plugins.Shared.UnityMonstackCore.Utils
 {
     public static class Easings
     {
