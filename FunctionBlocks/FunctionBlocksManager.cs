@@ -71,14 +71,14 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
             return cacheList;
         }
 
-        private static FunctionBlocksManager m_instance;
+        private static FunctionBlocksManager INSTANCE;
 
-        public static FunctionBlocksManager Instance => m_instance ??= new FunctionBlocksManager();
+        public static FunctionBlocksManager Instance => INSTANCE ??= new FunctionBlocksManager();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         public static void Reset()
         {
-            m_instance = new FunctionBlocksManager();
+            INSTANCE = new FunctionBlocksManager();
         }
     }
 }

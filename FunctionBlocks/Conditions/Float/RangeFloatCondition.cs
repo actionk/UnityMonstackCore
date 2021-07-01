@@ -8,7 +8,7 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks.Conditions.Float
     public class RangeFloatCondition : IFloatCondition
     {
         public RangeFloat range;
-        
+
         public bool Validate(float value)
         {
             return range.Contains(value);
