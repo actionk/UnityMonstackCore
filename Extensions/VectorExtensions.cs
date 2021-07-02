@@ -162,5 +162,13 @@ namespace Plugins.UnityMonstackCore.Extensions
         {
             return new int2((int) math.floor(v.x), (int) math.floor(v.z));
         }
+
+        public static float2 GetNormalizedCoordinates(this int2 position, int2 size)
+        {
+            return new float2(
+                math.clamp(position.x / (float)size.x, 0.0f, 1.0f),
+                math.clamp(position.y / (float)size.y, 0.0f, 1.0f)
+            );
+        }
     }
 }
