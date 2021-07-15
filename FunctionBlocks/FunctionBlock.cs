@@ -24,10 +24,10 @@ namespace Plugins.Shared.UnityMonstackCore.FunctionBlocks
         public bool disableTypeSelection;
 
         [OdinSerialize, OnValueChanged(nameof(OnTypeChanged)), ValueDropdown(nameof(GetTypes)), HideIf(nameof(disableTypeSelection))]
-        [InlineButton(nameof(OpenSource), "?")]
+        [InlineButton(nameof(OpenSource), "?"), HideLabel]
         public string type = "";
 
-        [NonSerialized, OdinSerialize, ShowInInspector, InlineProperty, HideReferenceObjectPicker, HideLabel, HideIf(nameof(IsEmpty))]
+        [NonSerialized, OdinSerialize, ShowInInspector, InlineProperty, HideReferenceObjectPicker, HideLabel, HideIf(nameof(IsEmpty)), HorizontalGroup("Value")]
         public T data;
 
         public bool IsEmpty => data == null;
